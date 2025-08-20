@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oonly Tracker Integration Test</title>
+</head>
+<body>
+    <h1>Oonly Tracker Integration Test</h1>
+    <p>This page tests the integration of your obfuscated tracker.</p>
+    
+    <button onclick="testTracking()">Test Tracking</button>
+    <button onclick="testIdentify()">Test Identify</button>
+    
+    <div id="status"></div>
+
+    <!-- Integration snippet - replace with your actual CDN URL -->
+    <script async src="./dist/oonly.min.js"
+            data-project-id="test-project-123"></script>
+
+    <script>
+        function testTracking() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('button_click', { button: 'test_tracking' });
+                document.getElementById('status').innerHTML = '✅ Tracking successful!';
+            } else {
+                document.getElementById('status').innerHTML = '❌ Tracker not loaded yet';
+            }
+        }
+        
+        function testIdentify() {
+            if (window.oonly && window.oonly.identify) {
+                window.oonly.identify('test-user-123', { 
+                    name: 'Test User',
+                    email: 'test@example.com'
+                });
+                document.getElementById('status').innerHTML = '✅ Identify successful!';
+            } else {
+                document.getElementById('status').innerHTML = '❌ Tracker not loaded yet';
+            }
+        }
+        
+        // Wait for tracker to load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (window.oonly) {
+                    document.getElementById('status').innerHTML = '✅ Tracker loaded successfully!';
+                } else {
+                    document.getElementById('status').innerHTML = '❌ Tracker failed to load';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "oonly-tracker",
+  "version": "1.0.0",
+  "description": "Oonly analytics tracker with privacy-focused session replay",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf dist && mkdir -p dist",
+    "build": "node scripts/build.mjs",
+    "release": "npm run clean && cp src/tracker.js dist/oonly.raw.js && javascript-obfuscator dist/oonly.raw.js --config=obfuscator.config.json --output dist/oonly.min.js"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.0"
+  }
+}
