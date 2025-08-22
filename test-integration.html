@@ -13,70 +13,23 @@
     <button onclick="testIdentify()">Test Identify</button>
     
     <div id="status">Loading tracker...</div>
-    <div id="debug"></div>
 
-    <!-- Try local build first, then GitHub Pages -->
+    <!-- Simple CDN integration - just add this one line! -->
+    <script async src="https://ziyanabbas.github.io/oonly-cdn/oonly.min.js" data-project-id="test-project-123"></script>
+
     <script>
-        // Try to load tracker with fallback
-        function loadTracker() {
-            const debug = document.getElementById('debug');
-            
-            // First try local build
-            const localScript = document.createElement('script');
-            localScript.async = true;
-            localScript.src = './dist/oonly.min.js';
-            localScript.setAttribute('data-project-id', 'test-project-123');
-            
-            localScript.onload = function() {
-                debug.innerHTML += '<br>✅ Loaded from local build';
-                checkTrackerStatus();
-            };
-            
-            localScript.onerror = function() {
-                debug.innerHTML += '<br>❌ Local build failed, trying GitHub Pages...';
-                
-                // Fallback to GitHub Pages
-                const ghScript = document.createElement('script');
-                ghScript.async = true;
-                ghScript.src = 'https://ziyanabbas.github.io/oonly-cdn/oonly.min.js';
-                ghScript.setAttribute('data-project-id', 'test-project-123');
-                
-                ghScript.onload = function() {
-                    debug.innerHTML += '<br>✅ Loaded from GitHub Pages';
-                    checkTrackerStatus();
-                };
-                
-                ghScript.onerror = function() {
-                    debug.innerHTML += '<br>❌ GitHub Pages also failed';
-                    document.getElementById('status').innerHTML = '❌ Tracker failed to load from all sources';
-                };
-                
-                document.head.appendChild(ghScript);
-            };
-            
-            document.head.appendChild(localScript);
-        }
-        
-        function checkTrackerStatus() {
+        // Wait for tracker to load and check status
+        window.addEventListener('load', function() {
             setTimeout(() => {
                 if (window.oonly) {
                     document.getElementById('status').innerHTML = '✅ Tracker loaded successfully!';
-                    debug.innerHTML += '<br>✅ window.oonly object found';
-                    
-                    // Check for specific methods
-                    if (window.oonly.track) debug.innerHTML += '<br>✅ track method available';
-                    if (window.oonly.identify) debug.innerHTML += '<br>✅ identify method available';
+                    console.log('Oonly tracker loaded:', window.oonly);
                 } else {
-                    document.getElementById('status').innerHTML = '❌ Tracker loaded but window.oonly not found';
+                    document.getElementById('status').innerHTML = '❌ Tracker failed to load';
                 }
-            }, 500);
-        }
+            }, 1000);
+        });
         
-        // Load tracker when page loads
-        window.addEventListener('load', loadTracker);
-    </script>
-
-    <script>
         function testTracking() {
             if (window.oonly && window.oonly.track) {
                 try {
