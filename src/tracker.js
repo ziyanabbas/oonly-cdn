@@ -25,36 +25,7 @@
   
     // TESTING: Remove this console log when ready for production
     console.log("🚀 Oonly Tracker loaded successfully! Version:", "1.3.0");
-    const CFG = {
-      /* ✨ BACKEND CONFIGURATION ✨ */
-    //   baseUrl: _ds.api || (_proto + "://api.oonly.com"), // Base URL for all API endpoints
-    //   wsBaseUrl: _ds.ws || (_wsp + "://api.oonly.com"), // WebSocket base URL
-      baseUrl: "http://localhost:5000", // Base URL for all API endpoints
-      wsBaseUrl: "ws://localhost:5000", // WebSocket base URL
-      apiVersion: _ds.ver || "v1", // API version
-  
-      bufMax: 60, // HTTP batch size
-      flushMs: 2000, // HTTP flush interval
-      idleMs: 30 * 60 * 1e3, // 30 min = new session
-      pointerSampleMs: 150, // heat-point throttle
-      /* ✨ NEW ✨ */
-      recChunkMs: 1500, // send replay chunks every 1.5 s
-      snapFullMs: 30000, // full DOM snapshot every 30 s
-      /* ✨ PRIVACY ✨ */
-      maskInputs: true, // enable input masking
-      maskChar: "*", // character to use for masking
-      maskMaxLen: 8, // maximum length of masked string
-      sensitiveSelectors: [], // custom CSS selectors for sensitive inputs
-      /* ✨ EXTERNAL REDIRECT HANDLING ✨ */
-      externalRedirectTimeout: 30 * 60 * 1e3, // 30 min timeout for external redirects
-      returnUrlParam: "oonly_return", // URL parameter to track return from external sites
-      externalRedirectKey: "_oo_external_redirect", // localStorage key for external redirect state
-      /* ✨ SEGMENTATION HANDLING ✨ */
-      segmentationEnabled: true, // enable automatic segmentation
-      segmentationCheckInterval: 60000, // check for segment matches every minute
-      segmentationCacheKey: "_oo_segments", // localStorage key for segment cache
-      userPropertiesKey: "_oo_user_props", // localStorage key for user properties
-    };
+            // CFG will be defined after _ds is declared
 
     /* ---------- Timing & Buffers (MUST BE BEFORE ANYTHING THAT CALLS queue/rec) ---------- */
     const now = () => Date.now();
@@ -100,140 +71,57 @@
       localStorage.setItem('oonly_user_id', id);
     }
 
-    // Event tracking
+    // Event tracking - simplified to just queue events
     function trackEvent(eventName, properties = {}) {
-      const projectId = getProjectId();
-      if (!projectId) {
-        log('No project ID found');
-        return;
-      }
-      
-      const eventData = {
-        event: eventName,
-        properties: properties,
-        timestamp: Date.now(),
-        sessionId: getSessionId(),
-        userId: getUserId(),
-        projectId: projectId,
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        referrer: document.referrer
-      };
-      
-      log('Tracking event:', eventData);
-      
-      // Send to your API
-      sendToAPI('/track', eventData);
+      const evt = { t: eventName, ...properties, ts: now() };
+      queue(evt);
+      rec(evt);
     }
     
-    // User identification
+    // User identification - simplified to just queue events
     function identifyUser(userId, traits = {}) {
       if (userId) {
         setUserId(userId);
       }
-      
-      const projectId = getProjectId();
-      if (!projectId) {
-        log('No project ID found');
-        return;
-      }
-      
-      const userData = {
-        userId: getUserId(),
-        traits: traits,
-        timestamp: Date.now(),
-        sessionId: getSessionId(),
-        projectId: projectId,
-        url: window.location.href
-      };
-      
-      log('Identifying user:', userData);
-      
-      // Send to your API
-      sendToAPI('/identify', userData);
+      const evt = { t: 'userIdentify', userId: getUserId(), traits, ts: now() };
+      queue(evt);
+      rec(evt);
     }
     
-    // Page view tracking
+    // Page view tracking - simplified to just queue events
     function trackPageView() {
-      trackEvent('page_view', {
-        title: document.title,
-        path: window.location.pathname,
-        search: window.location.search,
-        hash: window.location.hash
-      });
+      const evt = { t: 'page_view', title: document.title, path: location.pathname, ts: now() };
+      queue(evt);
+      rec(evt);
     }
     
-    // API communication
-    function sendToAPI(endpoint, data) {
-      // Use fetch with fallback to XMLHttpRequest
-      if (window.fetch) {
-        fetch(CFG.baseUrl + endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-        }).catch(error => {
-          log('API request failed:', error);
-        });
-      } else {
-        // Fallback for older browsers
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', CFG.baseUrl + endpoint, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(data));
-      }
-    }
+
     
-    // Auto-initialization
+    // Auto-initialization - simplified to just queue events
     function init() {
-      const projectId = getProjectId();
-      if (!projectId) {
-        log('No project ID found in script tag');
-        return;
-      }
-      
-      log('Initializing Oonly Tracker for project:', projectId);
+      log('Initializing Oonly Tracker');
       
       // Track initial page view
-      trackPageView();
+      queue({ t: "page_view", title: document.title, path: location.pathname, ts: now() });
+      rec({ t: "page_view", title: document.title, path: location.pathname, ts: now() });
       
       // Track page visibility changes
       if (document.hidden !== undefined) {
         document.addEventListener('visibilitychange', function() {
           if (!document.hidden) {
-            trackEvent('page_visible');
+            queue({ t: "page_visible", ts: now() });
+            rec({ t: "page_visible", ts: now() });
           } else {
-            trackEvent('page_hidden');
+            queue({ t: "page_hidden", ts: now() });
+            rec({ t: "page_hidden", ts: now() });
           }
         });
       }
       
       // Track beforeunload
       window.addEventListener('beforeunload', function() {
-        trackEvent('page_unload');
-      });
-      
-      // Auto-track clicks on buttons and links
-      document.addEventListener('click', function(e) {
-        const target = e.target;
-        if (target.tagName === 'BUTTON' || target.tagName === 'A') {
-          const properties = {
-            element: target.tagName.toLowerCase(),
-            text: target.textContent?.trim().substring(0, 50),
-            href: target.href || null,
-            className: target.className || null
-          };
-          trackEvent('element_click', properties);
-        }
-      });
-      
-      // Auto-track form submissions
-      document.addEventListener('submit', function(e) {
-        trackEvent('form_submit', {
-          form: e.target.action || 'unknown',
-          method: e.target.method || 'unknown'
-        });
+        queue({ t: "page_unload", ts: now() });
+        rec({ t: "page_unload", ts: now() });
       });
       
       log('Oonly Tracker initialized successfully');
@@ -259,6 +147,38 @@
     if (!pid) { 
       console.warn("[oonly] missing data-project-id; will init but not send"); 
     }
+
+    // Now define CFG after _ds is available
+    const CFG = {
+      /* ✨ BACKEND CONFIGURATION ✨ */
+      baseUrl: _ds.api || (_proto + "://api.oonly.com"), // Base URL for all API endpoints
+      wsBaseUrl: _ds.ws || (_wsp + "://api.oonly.com"), // WebSocket base URL
+      apiVersion: _ds.ver || "v1", // API version
+
+      bufMax: 60, // HTTP batch size
+      flushMs: 2000, // HTTP flush interval
+      idleMs: 30 * 60 * 1e3, // 30 min = new session
+      pointerSampleMs: 150, // heat-point throttle
+      /* ✨ NEW ✨ */
+      recChunkMs: 1500, // send replay chunks every 1.5 s
+      snapFullMs: 30000, // full DOM snapshot every 30 s
+      /* ✨ PRIVACY ✨ */
+      maskInputs: true, // enable input masking
+      maskChar: "*", // character to use for masking
+      maskMaxLen: 8, // maximum length of masked string
+      sensitiveSelectors: [], // custom CSS selectors for sensitive inputs
+      /* ✨ EXTERNAL REDIRECT HANDLING ✨ */
+      externalRedirectTimeout: 30 * 60 * 1e3, // 30 min timeout for external redirects
+      returnUrlParam: "oonly_return", // URL parameter to track return from external sites
+      externalRedirectKey: "_oo_external_redirect", // localStorage key for external redirect state
+      /* ✨ SEGMENTATION HANDLING ✨ */
+      segmentationEnabled: true, // enable automatic segmentation
+      segmentationCheckInterval: 60000, // check for segment matches every minute
+      segmentationCacheKey: "_oo_segments", // localStorage key for segment cache
+      userPropertiesKey: "_oo_user_props", // localStorage key for user properties
+    };
+
+    console.log("CFG loaded:", CFG);
   
     const uidKey = "_oo_uid",
       sidKey = "_oo_sid";
@@ -1699,7 +1619,8 @@
   
     /* ---------- HTTP Event Ingestion ---------- */
     const flush = () => {
-      if (!pid || !buf.length) return; // Gate on project ID
+      if (!pid || !buf.length) return;
+
       const payload = {
         projectKey: pid,
         sessionId: sid,
@@ -1714,23 +1635,25 @@
           scrH: screen.height,
         },
       };
-  
+
       const p = JSON.stringify(payload);
-      if (
-        navigator.sendBeacon &&
-        navigator.sendBeacon(`${CFG.baseUrl}/${CFG.apiVersion}/event/ingest`, p)
-      ) {
+      const url = `${CFG.baseUrl}/${CFG.apiVersion}/event/ingest`;
+
+      // 🔁 IMPORTANT CHANGE: send JSON as a Blob with content-type
+      const body = new Blob([p], { type: 'application/json' });
+      if (navigator.sendBeacon && navigator.sendBeacon(url, body)) {
         lastFlush = now();
         return;
       }
-  
-      fetch(`${CFG.baseUrl}/${CFG.apiVersion}/event/ingest`, {
-        method: "POST",
-        body: p,
+
+      // Fallback stays the same
+      fetch(url, {
+        method: 'POST',
         keepalive: true,
-        headers: { "Content-Type": "application/json" },
-      }).catch((err) => console.warn("[oonly] HTTP flush failed:", err));
-  
+        headers: { 'Content-Type': 'application/json' },
+        body: p,
+      }).catch(err => console.warn('[oonly] HTTP flush failed:', err));
+
       lastFlush = now();
     };
   

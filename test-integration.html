@@ -1,121 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oonly Tracker Integration Test</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .demo-section { 
-            margin: 20px 0; 
-            padding: 20px; 
-            border: 1px solid #dee2e6; 
-            border-radius: 5px; 
-            background: #f8f9fa;
-        }
-        .status { 
-            margin: 20px 0; 
-            padding: 15px; 
-            border-radius: 5px; 
-            background: #f8f9fa; 
-            border: 1px solid #dee2e6;
-        }
-        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
-        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
-        .info { background: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
-        button { 
-            margin: 5px; 
-            padding: 10px 15px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 14px;
-            background: #007bff; 
-            color: white; 
-        }
-        input, textarea { 
-            margin: 5px; 
-            padding: 8px; 
-            border: 1px solid #ddd; 
-            border-radius: 3px; 
-            width: 200px; 
-        }
-        a { color: #007bff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+      }
+      .demo-section {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background: #f8f9fa;
+      }
+      .status {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 5px;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+      }
+      .success {
+        background: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+      }
+      .info {
+        background: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+      }
+      button {
+        margin: 5px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        background: #007bff;
+        color: white;
+      }
+      input,
+      textarea {
+        margin: 5px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        width: 200px;
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Oonly Tracker Integration Test</h1>
-    <p>This page demonstrates automatic tracking - no manual event code needed!</p>
+    <p>
+      This page demonstrates automatic tracking - no manual event code needed!
+    </p>
+
+    <script
+      defer
+      src="https://ziyanabbas.github.io/oonly-cdn/oonly.min.js?v=1.3.1"
+      data-project-id="68a482061f216e82510ebb19"
+      data-api="http://127.0.0.1:5000"
+      data-ws="ws://127.0.0.1:5000"
+      data-ver="v1"
+    ></script>
 
     <!-- Simple CDN integration - just add this one line! -->
-    <script defer src="https://ziyanabbas.github.io/oonly-cdn/oonly.min.js?v=1.3.1" data-project-id="68a482061f216e82510ebb19"></script>
+    <!-- <script
+      defer
+      src="/dist/oonly.min.js"
+      data-project-id="68a482061f216e82510ebb19"
+      data-api="http://127.0.0.1:5000"
+      data-ws="ws://127.0.0.1:5000"
+      data-ver="v1"
+    ></script> -->
 
     <!-- Demo Sections to Show Automatic Tracking -->
     <div class="demo-section">
-        <h3>🎯 Automatic Click Tracking</h3>
-        <p>Click any of these buttons - the tracker will automatically record them:</p>
-        <button>Test Button 1</button>
-        <button>Test Button 2</button>
-        <button>Test Button 3</button>
+      <h3>🎯 Automatic Click Tracking</h3>
+      <p>
+        Click any of these buttons - the tracker will automatically record them:
+      </p>
+      <button>Test Button 1</button>
+      <button>Test Button 2</button>
+      <button>Test Button 3</button>
     </div>
 
     <div class="demo-section">
-        <h3>🔗 Automatic Link Tracking</h3>
-        <p>Click these links - the tracker will automatically record outbound clicks:</p>
-        <a href="https://example.com" target="_blank">External Link (Example)</a><br>
-        <a href="https://google.com" target="_blank">External Link (Google)</a><br>
-        <a href="#section1">Internal Link</a>
+      <h3>🔗 Automatic Link Tracking</h3>
+      <p>
+        Click these links - the tracker will automatically record outbound
+        clicks:
+      </p>
+      <a href="https://example.com" target="_blank">External Link (Example)</a
+      ><br />
+      <a href="https://google.com" target="_blank">External Link (Google)</a
+      ><br />
+      <a href="#section1">Internal Link</a>
     </div>
 
     <div class="demo-section">
-        <h3>📝 Automatic Form Tracking</h3>
-        <p>Interact with this form - the tracker will automatically record all interactions:</p>
-        <form>
-            <input type="text" placeholder="Enter your name" name="name"><br>
-            <input type="email" placeholder="Enter your email" name="email"><br>
-            <textarea placeholder="Enter your message" name="message" rows="3"></textarea><br>
-            <button type="submit">Submit Form</button>
-        </form>
+      <h3>📝 Automatic Form Tracking</h3>
+      <p>
+        Interact with this form - the tracker will automatically record all
+        interactions:
+      </p>
+      <form>
+        <input type="text" placeholder="Enter your name" name="name" /><br />
+        <input type="email" placeholder="Enter your email" name="email" /><br />
+        <textarea
+          placeholder="Enter your message"
+          name="message"
+          rows="3"
+        ></textarea
+        ><br />
+        <button type="submit">Submit Form</button>
+      </form>
     </div>
 
     <div class="demo-section">
-        <h3>📱 Automatic Device & Performance Tracking</h3>
-        <p>The tracker automatically records:</p>
-        <ul>
-            <li>Page views and navigation</li>
-            <li>Scroll depth and engagement</li>
-            <li>Mouse movements and clicks</li>
-            <li>Form interactions</li>
-            <li>Performance metrics</li>
-            <li>Device information</li>
-            <li>Session duration</li>
-        </ul>
+      <h3>📱 Automatic Device & Performance Tracking</h3>
+      <p>The tracker automatically records:</p>
+      <ul>
+        <li>Page views and navigation</li>
+        <li>Scroll depth and engagement</li>
+        <li>Mouse movements and clicks</li>
+        <li>Form interactions</li>
+        <li>Performance metrics</li>
+        <li>Device information</li>
+        <li>Session duration</li>
+      </ul>
     </div>
 
     <!-- Status Display -->
     <div id="status" class="status info">Loading tracker...</div>
 
     <script>
-        // Simple status check - no manual tracking needed
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                if (window.oonly) {
-                    document.getElementById('status').innerHTML = '✅ Tracker loaded successfully! All events are being tracked automatically.';
-                    document.getElementById('status').className = 'status success';
-                    console.log('Oonly tracker loaded:', window.oonly);
-                } else {
-                    document.getElementById('status').innerHTML = '❌ Tracker failed to load';
-                    document.getElementById('status').className = 'status error';
-                }
-            }, 4000);
-        });
+      // Simple status check - no manual tracking needed
+      window.addEventListener("load", function () {
+        setTimeout(() => {
+          if (window.oonly) {
+            document.getElementById("status").innerHTML =
+              "✅ Tracker loaded successfully! All events are being tracked automatically.";
+            document.getElementById("status").className = "status success";
+            console.log("Oonly tracker loaded:", window.oonly);
+          } else {
+            document.getElementById("status").innerHTML =
+              "❌ Tracker failed to load";
+            document.getElementById("status").className = "status error";
+          }
+        }, 4000);
+      });
 
-        // Prevent form submission (just for demo)
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Form submitted! (This is just a demo - the tracker recorded the submission automatically)');
-        });
+      // Prevent form submission (just for demo)
+      document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        alert(
+          "Form submitted! (This is just a demo - the tracker recorded the submission automatically)"
+        );
+      });
     </script>
-</body>
+  </body>
 </html>
