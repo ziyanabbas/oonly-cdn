@@ -27,8 +27,10 @@
     console.log("🚀 Oonly Tracker loaded successfully! Version:", "1.3.0");
     const CFG = {
       /* ✨ BACKEND CONFIGURATION ✨ */
-      baseUrl: _ds.api || (_proto + "://api.oonly.com"), // Base URL for all API endpoints
-      wsBaseUrl: _ds.ws || (_wsp + "://api.oonly.com"), // WebSocket base URL
+    //   baseUrl: _ds.api || (_proto + "://api.oonly.com"), // Base URL for all API endpoints
+    //   wsBaseUrl: _ds.ws || (_wsp + "://api.oonly.com"), // WebSocket base URL
+      baseUrl: "http://localhost:5000", // Base URL for all API endpoints
+      wsBaseUrl: "ws://localhost:5000", // WebSocket base URL
       apiVersion: _ds.ver || "v1", // API version
   
       bufMax: 60, // HTTP batch size
