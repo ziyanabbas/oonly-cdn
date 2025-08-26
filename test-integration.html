@@ -8,56 +8,8 @@
 <body>
     <h1>Oonly Tracker Integration Test</h1>
     <p>This page tests the integration of your obfuscated tracker.</p>
-    
-    <button onclick="testTracking()">Test Tracking 1</button>
-    <button onclick="testIdentify()">Test Identify</button>
-    
-    <div id="status">Loading tracker...</div>
 
     <!-- Simple CDN integration - just add this one line! -->
     <script async src="https://ziyanabbas.github.io/oonly-cdn/oonly.min.js" data-project-id="test-project-123"></script>
-
-    <script>
-        // Wait for tracker to load and check status
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                if (window.oonly) {
-                    document.getElementById('status').innerHTML = '✅ Tracker loaded successfully!';
-                    console.log('Oonly tracker loaded:', window.oonly);
-                } else {
-                    document.getElementById('status').innerHTML = '❌ Tracker failed to load';
-                }
-            }, 1000);
-        });
-        
-        function testTracking() {
-            if (window.oonly && window.oonly.track) {
-                try {
-                    window.oonly.track('button_click', { button: 'test_tracking' });
-                    document.getElementById('status').innerHTML = '✅ Tracking successful!';
-                } catch (error) {
-                    document.getElementById('status').innerHTML = '❌ Tracking failed: ' + error.message;
-                }
-            } else {
-                document.getElementById('status').innerHTML = '❌ Tracker not loaded yet';
-            }
-        }
-        
-        function testIdentify() {
-            if (window.oonly && window.oonly.identify) {
-                try {
-                    window.oonly.identify('test-user-123', { 
-                        name: 'Test User',
-                        email: 'test@example.com'
-                    });
-                    document.getElementById('status').innerHTML = '✅ Identify successful!';
-                } catch (error) {
-                    document.getElementById('status').innerHTML = '❌ Identify failed: ' + error.message;
-                }
-            } else {
-                document.getElementById('status').innerHTML = '❌ Tracker not loaded yet';
-            }
-        }
-    </script>
 </body>
 </html>
