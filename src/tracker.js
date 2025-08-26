@@ -3,17 +3,33 @@
    GA-plus + Clarity-plus *plus* full session-replay + Advanced Segmentation.
    Footprint ≈22 kB gzip (extra 4 kB for replay), zero deps, ES5-safe
 ────────────────────────────────────────────────────────────── */
+
+// IMMEDIATE STUB - ensures window.oonly exists even if heavy init fails
+;(function (w) {
+  if (!w.oonly) {
+    const q = [];
+    const api = function(){ q.push(arguments); };
+    api._q = q; api._ready = false;
+    api.onReady = function(cb){ (api._cbs||(api._cbs=[])).push(cb); if (api._ready) try{cb();}catch{} };
+    ["track","identify","set","configure","refreshSegments","getUserProperties",
+     "getActiveSegments","isInSegment","trackSegmentInteraction"].forEach(m=>{
+      api[m]=function(){ q.push([m,Array.from(arguments)]); };
+    });
+    w.oonly = api;
+  }
+})(window);
+
 (function () {
     /* ---------- Config ---------- */
     "use strict";
   
     // TESTING: Remove this console log when ready for production
-    console.log("🚀 Oonly Tracker loaded successfully! Version:", "1.0.0");
+    console.log("🚀 Oonly Tracker loaded successfully! Version:", "1.3.0");
     const CFG = {
       /* ✨ BACKEND CONFIGURATION ✨ */
-      baseUrl: "http://localhost:5000", // Base URL for all API endpoints
-      wsBaseUrl: "ws://localhost:5000", // WebSocket base URL
-      apiVersion: "v1", // API version
+      baseUrl: _ds.api || (_proto + "://api.oonly.com"), // Base URL for all API endpoints
+      wsBaseUrl: _ds.ws || (_wsp + "://api.oonly.com"), // WebSocket base URL
+      apiVersion: _ds.ver || "v1", // API version
   
       bufMax: 60, // HTTP batch size
       flushMs: 2000, // HTTP flush interval
@@ -37,12 +53,209 @@
       segmentationCacheKey: "_oo_segments", // localStorage key for segment cache
       userPropertiesKey: "_oo_user_props", // localStorage key for user properties
     };
+
+    /* ---------- Timing & Buffers (MUST BE BEFORE ANYTHING THAT CALLS queue/rec) ---------- */
+    const now = () => Date.now();
+    const buf = [];
+    let lastFlush = now();
+    let recBuf = [];
+    let lastSnap = now();
+
+    // Basic queue/rec functions (will be redefined later with full logic)
+    function queue(e) { buf.push(e); }
+    function rec(e) { recBuf.push(e); }
+
+    // Utility functions
+    function log(message, data) {
+      if (CFG.debug) {
+        console.log('[Oonly]', message, data);
+      }
+    }
+    
+    function generateId() {
+      return 'id_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    function getProjectId() {
+      const script = document.currentScript || document.querySelector('script[src*="oonly.min.js"]');
+      return script ? script.getAttribute('data-project-id') : null;
+    }
+    
+    function getSessionId() {
+      let sessionId = sessionStorage.getItem('oonly_session_id');
+      if (!sessionId) {
+        sessionId = generateId();
+        sessionStorage.setItem('oonly_session_id', sessionId);
+      }
+      return sessionId;
+    }
+    
+    function getUserId() {
+      return localStorage.getItem('oonly_user_id') || generateId();
+    }
+    
+    function setUserId(id) {
+      localStorage.setItem('oonly_user_id', id);
+    }
+
+    // Event tracking
+    function trackEvent(eventName, properties = {}) {
+      const projectId = getProjectId();
+      if (!projectId) {
+        log('No project ID found');
+        return;
+      }
+      
+      const eventData = {
+        event: eventName,
+        properties: properties,
+        timestamp: Date.now(),
+        sessionId: getSessionId(),
+        userId: getUserId(),
+        projectId: projectId,
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        referrer: document.referrer
+      };
+      
+      log('Tracking event:', eventData);
+      
+      // Send to your API
+      sendToAPI('/track', eventData);
+    }
+    
+    // User identification
+    function identifyUser(userId, traits = {}) {
+      if (userId) {
+        setUserId(userId);
+      }
+      
+      const projectId = getProjectId();
+      if (!projectId) {
+        log('No project ID found');
+        return;
+      }
+      
+      const userData = {
+        userId: getUserId(),
+        traits: traits,
+        timestamp: Date.now(),
+        sessionId: getSessionId(),
+        projectId: projectId,
+        url: window.location.href
+      };
+      
+      log('Identifying user:', userData);
+      
+      // Send to your API
+      sendToAPI('/identify', userData);
+    }
+    
+    // Page view tracking
+    function trackPageView() {
+      trackEvent('page_view', {
+        title: document.title,
+        path: window.location.pathname,
+        search: window.location.search,
+        hash: window.location.hash
+      });
+    }
+    
+    // API communication
+    function sendToAPI(endpoint, data) {
+      // Use fetch with fallback to XMLHttpRequest
+      if (window.fetch) {
+        fetch(CFG.baseUrl + endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        }).catch(error => {
+          log('API request failed:', error);
+        });
+      } else {
+        // Fallback for older browsers
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', CFG.baseUrl + endpoint, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+      }
+    }
+    
+    // Auto-initialization
+    function init() {
+      const projectId = getProjectId();
+      if (!projectId) {
+        log('No project ID found in script tag');
+        return;
+      }
+      
+      log('Initializing Oonly Tracker for project:', projectId);
+      
+      // Track initial page view
+      trackPageView();
+      
+      // Track page visibility changes
+      if (document.hidden !== undefined) {
+        document.addEventListener('visibilitychange', function() {
+          if (!document.hidden) {
+            trackEvent('page_visible');
+          } else {
+            trackEvent('page_hidden');
+          }
+        });
+      }
+      
+      // Track beforeunload
+      window.addEventListener('beforeunload', function() {
+        trackEvent('page_unload');
+      });
+      
+      // Auto-track clicks on buttons and links
+      document.addEventListener('click', function(e) {
+        const target = e.target;
+        if (target.tagName === 'BUTTON' || target.tagName === 'A') {
+          const properties = {
+            element: target.tagName.toLowerCase(),
+            text: target.textContent?.trim().substring(0, 50),
+            href: target.href || null,
+            className: target.className || null
+          };
+          trackEvent('element_click', properties);
+        }
+      });
+      
+      // Auto-track form submissions
+      document.addEventListener('submit', function(e) {
+        trackEvent('form_submit', {
+          form: e.target.action || 'unknown',
+          method: e.target.method || 'unknown'
+        });
+      });
+      
+      log('Oonly Tracker initialized successfully');
+    }
   
     /* ---------- Project + IDs ---------- */
-    const pid = document.currentScript.dataset.projectId;
-    if (!pid) {
-      console.error("[oonly] missing data-project-id");
-      return;
+    // Robust project ID detection with no early return
+    function getScriptEl(){
+      var cs = document.currentScript;
+      if (cs) return cs;
+      var s = document.getElementsByTagName('script');
+      return s[s.length-1] || null;
+    }
+    var _el = getScriptEl();
+    var _ds = (_el && _el.dataset) || {};
+    var pid = _ds.projectId || (_el && _el.getAttribute('data-project-id')) || null;
+
+    // Defaults that respect page protocol
+    var _proto = location.protocol === "https:" ? "https" : "http";
+    var _wsp = _proto === "https" ? "wss" : "ws";
+    
+    // IMPORTANT: do NOT return if !pid - just warn and continue
+    if (!pid) { 
+      console.warn("[oonly] missing data-project-id; will init but not send"); 
     }
   
     const uidKey = "_oo_uid",
@@ -124,10 +337,7 @@
   
               // Remove return parameter from URL
               urlParams.delete(CFG.returnUrlParam);
-              const newUrl =
-                location.pathname +
-                location.hash +
-                (urlParams.toString() ? "?" + urlParams.toString() : "");
+              const newUrl = location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "") + location.hash;
               history.replaceState(null, "", newUrl);
   
               console.log("[oonly] External return detected:", data.type);
@@ -523,13 +733,14 @@
         }
   
         // Track form submission
+        const pairs = Array.from(formData.entries());
         const evt = {
           t: "formSubmit",
           formId: form.id || form.className || "unknown",
           formAction: form.action || "",
           formMethod: form.method || "POST",
           formData: formProps,
-          fieldCount: formData.entries().length,
+          fieldCount: pairs.length,
           ts: now(),
         };
         queue(evt);
@@ -861,6 +1072,33 @@
   
     // Initialize automatic tracking
     initAutomaticTracking();
+    
+    // Initialize the tracker
+    init();
+    
+    // Promote stub to real API and replay queued calls
+    (function promoteAPI(){
+      var stub = window.oonly, q = (stub && stub._q)||[], cbs=(stub && stub._cbs)||[];
+      window.oonly = Object.assign(function(){}, {
+        track: (t,p)=>{ var evt=Object.assign({t,ts:now()},p||{}); queue(evt); rec(evt); },
+        identify: (id,traits)=>{ identifyUser(id, traits||{}); },
+        set: (traits)=>{ setUserProperties(traits||{}); },
+        configure: window.oonly.configure,
+        refreshSegments: window.oonly.refreshSegments,
+        getUserProperties: ()=>({ ...userProperties }),
+        getActiveSegments: ()=>Array.from(activeSegments),
+        isInSegment: (id)=>activeSegments.has(id),
+        trackSegmentInteraction: (id,kind,props)=>{ var evt=Object.assign({t:"segmentInteraction",segmentId:id,interactionType:kind,ts:now()},props||{}); queue(evt); rec(evt); },
+        ready: true,
+        onReady: (cb)=>{ try{cb();}catch{} },
+      });
+      q.forEach(function(item){
+        var m=item && item[0], args=item && item[1];
+        if (m && typeof window.oonly[m]==="function") try{ window.oonly[m].apply(null,args||[]); }catch{}
+      });
+      if (stub) stub._ready=true;
+      cbs.forEach(function(cb){ try{cb();}catch{} });
+    })();
   
     /* ---------- Enhanced Mouse Tracking ---------- */
     // Track mouse movements, clicks, and interaction patterns
@@ -1363,6 +1601,13 @@
       saveSegmentCache();
       checkForSegmentMatches();
     };
+
+    // Update segment cache (internal function)
+    function updateSegmentCache(segments) {
+      segmentCache = segments;
+      saveSegmentCache();
+      checkForSegmentMatches();
+    }
   
     // Force segment refresh (optional - for manual updates)
     window.oonly.refreshSegments = function () {
@@ -1376,6 +1621,21 @@
           }
         })
         .catch((err) => console.warn("[oonly] Failed to refresh segments:", err));
+    };
+
+    // Reset session (optional - for manual reset)
+    window.oonly.reset = function () {
+      newSession("manual");
+    };
+
+    // Set privacy settings (optional - for configuration)
+    window.oonly.setPrivacy = function (settings) {
+      if (settings && typeof settings === "object") {
+        if (settings.maskInputs !== undefined) CFG.maskInputs = settings.maskInputs;
+        if (settings.maskChar !== undefined) CFG.maskChar = settings.maskChar;
+        if (settings.maskMaxLen !== undefined) CFG.maskMaxLen = settings.maskMaxLen;
+        if (settings.sensitiveSelectors !== undefined) CFG.sensitiveSelectors = settings.sensitiveSelectors;
+      }
     };
   
     // Get segment analytics (optional - for advanced users)
@@ -1407,18 +1667,19 @@
     };
   
     /* ---------- Buffers ---------- */
-    const buf = [],
-      now = () => Date.now();
-    let lastFlush = now();
+    // const buf = [], // Moved to top
+    //   now = () => Date.now(); // Moved to top
+    // let lastFlush = now(); // Moved to top
     /* ✨ NEW ✨ separate replay buffer streamed over WS */
-    let recBuf = [];
-    let lastSnap = now();
+    // let recBuf = []; // Moved to top
+    // let lastSnap = now(); // Moved to top
   
     /* ---------- Streaming websocket for session replay ---------- */
     let ws,
       wsOpen = false,
       wsQueue = [];
     function openWS() {
+      if (!pid) return; // Gate on project ID
       ws = new WebSocket(
         `${CFG.wsBaseUrl}/${CFG.apiVersion}/record?pid=${pid}&sid=${sid}`
       );
@@ -1429,14 +1690,14 @@
       };
       ws.onclose = ws.onerror = () => {
         wsOpen = false;
-        setTimeout(openWS, 5000);
+        setTimeout(openWS, 4000 + Math.random() * 4000); // Add jitter to reconnects
       }; // auto-reconnect
     }
     openWS();
   
     /* ---------- HTTP Event Ingestion ---------- */
     const flush = () => {
-      if (!buf.length) return;
+      if (!pid || !buf.length) return; // Gate on project ID
       const payload = {
         projectKey: pid,
         sessionId: sid,
@@ -1471,12 +1732,14 @@
       lastFlush = now();
     };
   
-    const queue = (e) => {
+    // Queue function redefined with full logic
+    function queue(e) {
       buf.push(e);
       if (now() - lastFlush > CFG.flushMs || buf.length > CFG.bufMax) flush();
-    };
+    }
   
     /* ✨ NEW ✨ replay batching & flush over WS (falls back to HTTP if WS not ready) */
+    // Rec function redefined with full logic
     function rec(event) {
       recBuf.push(event);
     }
@@ -1494,14 +1757,19 @@
   
     /* ---------- First-visit & session start ---------- */
     if (!localStorage.getItem("_oo_firstVisit")) {
-      const evt = { t: "firstVisit", ts: now(), url: location.href };
+      const ts = now();
+      const evt = { t: "firstVisit", ts, url: location.href };
       queue(evt);
       rec(evt);
-      localStorage.setItem("_oo_firstVisit", "1");
+      localStorage.setItem("_oo_firstVisit", String(ts));
     }
     const sessionEvt = { t: "sessionStart", ts: now(), url: location.href };
     queue(sessionEvt);
     rec(sessionEvt);
+    
+    // Set session start time and increment page views
+    localStorage.setItem("_oo_session_start", String(now()));
+    localStorage.setItem("_oo_page_views", String((+localStorage.getItem("_oo_page_views") || 0) + 1));
   
     /* ---------- Env + campaign once ---------- */
     const qp = new URLSearchParams(location.search);
@@ -1545,6 +1813,10 @@
       queue(evt);
       rec(evt);
       lastAct = now();
+      
+      // Update session tracking
+      localStorage.setItem("_oo_session_start", String(now()));
+      localStorage.setItem("_oo_page_views", String((+localStorage.getItem("_oo_page_views") || 0) + 1));
     }
   
     /* ---------- User-engagement ping (GA4) ---------- */
@@ -1593,6 +1865,8 @@
       rec(evt);
   
       // Track funnel steps on route changes
+      // Increment page views for SPA navigation
+      localStorage.setItem("_oo_page_views", String((+localStorage.getItem("_oo_page_views") || 0) + 1));
     }
   
     /* ---------- Clicks, rage clicks, outbound, downloads ---------- */
@@ -1670,12 +1944,13 @@
         return "payment";
       }
   
-      // Social login
+      // Social login - more specific to avoid false positives
       if (
-        host.includes("facebook.com") ||
-        host.includes("google.com") ||
+        host.includes("accounts.facebook.com") ||
+        host.includes("accounts.google.com") ||
         host.includes("github.com") ||
-        host.includes("twitter.com")
+        host.includes("twitter.com") ||
+        host.includes("x.com")
       ) {
         return "social_login";
       }
@@ -1729,28 +2004,7 @@
       true
     );
   
-    /* ---------- Scroll depth & section time ---------- */
-    let maxScroll = 0;
-    addEventListener(
-      "scroll",
-      () => {
-        const pct = Math.round(
-          ((scrollY + innerHeight) / document.documentElement.scrollHeight) * 100
-        );
-        if (pct > maxScroll) {
-          maxScroll = pct;
-          const evt = { t: "scrollDepth", pct, ts: now() };
-          queue(evt);
-          rec(evt);
-          if (pct >= 90) {
-            const evt90 = { t: "scroll90", ts: now() };
-            queue(evt90);
-            rec(evt90);
-          }
-        }
-      },
-      { passive: true }
-    );
+    /* ---------- Section time tracking ---------- */
     const sections = [...document.querySelectorAll("[data-oonly-section]")];
     const inView = new Map();
     const io = new IntersectionObserver(
@@ -2135,9 +2389,8 @@
     });
   
     /* ---------- Public API ---------- */
-    window.oonly =
-      window.oonly ||
-      function (cmd, a, b) {
+    // Add command interface without overwriting the object API
+    window.oonlyCmd = function (cmd, a, b) {
         switch (cmd) {
           case "track":
             const evt = { t: "custom", name: a, props: b || {}, ts: now() };
@@ -2188,6 +2441,15 @@
       };
   
     /* ---------- Privacy Protection ---------- */
+    // Configure method to update settings after load
+    window.oonly.configure = function(cfg){
+      if (cfg.projectId) pid = cfg.projectId;
+      if (cfg.baseUrl) CFG.baseUrl = cfg.baseUrl;
+      if (cfg.wsBaseUrl) CFG.wsBaseUrl = cfg.wsBaseUrl;
+      if (cfg.apiVersion) CFG.apiVersion = cfg.apiVersion;
+      if (ws && wsOpen) { ws.close(); setTimeout(openWS, 1000); } else { openWS(); }
+    };
+
     function isSensitiveInput(el) {
       if (!el || !el.tagName) return false;
       const tag = el.tagName.toLowerCase();
