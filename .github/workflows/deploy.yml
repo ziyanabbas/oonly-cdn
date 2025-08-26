@@ -10,9 +10,10 @@ permissions:
   pages: write
   id-token: write
 
+# 👇 ensures only one Pages job at a time, cancels older ones
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
