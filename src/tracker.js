@@ -23,10 +23,7 @@
     /* ---------- Config ---------- */
     "use strict";
   
-    // TESTING: Remove this console log when ready for production
-    console.log("🚀 Oonly Tracker loaded successfully! Version: ", "1.3.0");
-    // CFG will be defined after _ds is declared
-    // Force new deployment - GitHub Pages was stuck
+    // TESTING: Remove this console log when ready for production            // CFG will be defined after _ds is declared
 
     /* ---------- Timing & Buffers (MUST BE BEFORE ANYTHING THAT CALLS queue/rec) ---------- */
     const now = () => Date.now();
@@ -42,7 +39,6 @@
     // Utility functions
     function log(message, data) {
       if (CFG.debug) {
-        console.log('[Oonly]', message, data);
       }
     }
     
@@ -146,7 +142,6 @@
     
     // IMPORTANT: do NOT return if !pid - just warn and continue
     if (!pid) { 
-      console.warn("[oonly] missing data-project-id; will init but not send"); 
     }
 
     // Now define CFG after _ds is available
@@ -179,7 +174,6 @@
       userPropertiesKey: "_oo_user_props", // localStorage key for user properties
     };
 
-    console.log("CFG loaded:", CFG);
   
     const uidKey = "_oo_uid",
       sidKey = "_oo_sid";
@@ -263,7 +257,6 @@
               const newUrl = location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "") + location.hash;
               history.replaceState(null, "", newUrl);
   
-              console.log("[oonly] External return detected:", data.type);
             }
           } catch (e) {
             console.warn("[oonly] Invalid redirect data:", e);
@@ -999,6 +992,62 @@
     // Initialize the tracker
     init();
     
+    // Fetch geolocation data and then queue initial events
+    fetchGeoLocation().then(() => {
+      // Queue initial events AFTER geo data is fetched
+      const qp = new URLSearchParams(location.search);
+      const envEvt = {
+        t: "env",
+        lang: navigator.language,
+        scrW: screen.width,
+        scrH: screen.height,
+        ua: navigator.userAgent,
+        geo: geoData, // Now geoData should be populated
+        ts: now(),
+      };
+      queue(envEvt);
+      rec(envEvt);
+      
+      if (qp.get("utm_source") || qp.get("utm_medium") || qp.get("utm_campaign")) {
+        const campaignEvt = {
+          t: "campaign",
+          src: qp.get("utm_source") || "",
+          med: qp.get("utm_source") || "",
+          cmp: qp.get("utm_campaign") || "",
+          ts: now(),
+        };
+        queue(campaignEvt);
+        rec(campaignEvt);
+      }
+    }).catch(err => {
+      console.warn('[oonly] Geolocation failed, queuing events without geo data');
+      // Fallback: queue events without geo data
+      const qp = new URLSearchParams(location.search);
+      const envEvt = {
+        t: "env",
+        lang: navigator.language,
+        scrW: screen.width,
+        scrH: screen.height,
+        ua: navigator.userAgent,
+        geo: null,
+        ts: now(),
+      };
+      queue(envEvt);
+      rec(envEvt);
+      
+      if (qp.get("utm_source") || qp.get("utm_source") || qp.get("utm_campaign")) {
+        const campaignEvt = {
+          t: "campaign",
+          src: qp.get("utm_source") || "",
+          med: qp.get("utm_source") || "",
+          cmp: qp.get("utm_campaign") || "",
+          ts: now(),
+        };
+        queue(campaignEvt);
+        rec(campaignEvt);
+      }
+    });
+    
     // Promote stub to real API and replay queued calls
     (function promoteAPI(){
       var stub = window.oonly, q = (stub && stub._q)||[], cbs=(stub && stub._cbs)||[];
@@ -1510,12 +1559,6 @@
           setTimeout(openWS, 1000);
         }
       }
-  
-      console.log("[oonly] Configuration updated:", {
-        baseUrl: CFG.baseUrl,
-        wsBaseUrl: CFG.wsBaseUrl,
-        apiVersion: CFG.apiVersion,
-      });
     };
   
     // Update segment cache (called by server)
@@ -1622,6 +1665,7 @@
     const flush = () => {
       if (!pid || !buf.length) return;
 
+
       const payload = {
         projectKey: pid,
         sessionId: sid,
@@ -1634,6 +1678,7 @@
           referrer: document.referrer,
           scrW: screen.width,
           scrH: screen.height,
+          geo: geoData, // Include geo data in context
         },
       };
 
@@ -1697,29 +1742,66 @@
     localStorage.setItem("_oo_session_start", String(now()));
     localStorage.setItem("_oo_page_views", String((+localStorage.getItem("_oo_page_views") || 0) + 1));
   
-    /* ---------- Env + campaign once ---------- */
-    const qp = new URLSearchParams(location.search);
-    const envEvt = {
-      t: "env",
-      lang: navigator.language,
-      scrW: screen.width,
-      scrH: screen.height,
-      ua: navigator.userAgent,
-      ts: now(),
-    };
-    queue(envEvt);
-    rec(envEvt);
-    if (qp.get("utm_source") || qp.get("utm_medium") || qp.get("utm_campaign")) {
-      const campaignEvt = {
-        t: "campaign",
-        src: qp.get("utm_source") || "",
-        med: qp.get("utm_medium") || "",
-        cmp: qp.get("utm_campaign") || "",
-        ts: now(),
-      };
-      queue(campaignEvt);
-      rec(campaignEvt);
+    /* ---------- IP Geolocation ---------- */
+    let geoData = null;
+    
+    // Function to fetch IP geolocation
+    async function fetchGeoLocation() {
+      try {
+        // Use reliable IP services that work consistently
+        const geoUrls = [
+          'https://api.ipify.org?format=json',
+          'https://httpbin.org/ip'
+        ];
+        
+        for (const url of geoUrls) {
+          try {
+            const response = await fetch(url, { 
+              method: 'GET',
+              mode: 'cors',
+              headers: {
+                'Accept': 'application/json'
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              
+              // Get IP address
+              const ip = url.includes('ipify.org') ? data.ip : data.origin;
+              
+              if (ip) {
+                geoData = {
+                  ip: ip,
+                  source: url.includes('ipify.org') ? 'ipify.org' : 'httpbin.org'
+                };
+                
+                
+                // Try to get country info using a simple, reliable method
+                try {
+                  // Use a simple country lookup that's more reliable
+                  const countryResponse = await fetch(`https://ipapi.co/${ip}/country_name/`);
+                  if (countryResponse.ok) {
+                    const country = await countryResponse.text();
+                    geoData.country = country.trim();
+                  }
+                } catch (countryErr) {
+                }
+                
+                break; // Use first successful response
+              }
+            }
+          } catch (err) {
+            console.warn('[oonly] IP service failed:', url, err);
+            continue; // Try next service
+          }
+        }
+      } catch (err) {
+        console.warn('[oonly] All IP services failed:', err);
+      }
     }
+
+    /* ---------- Env + campaign events are now queued after geolocation ---------- */
   
     /* ---------- Idle → new session ---------- */
     let lastAct = now();
