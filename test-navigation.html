@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Test - Oonly Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .current-url {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <!-- Oonly Tracker Script -->
+    <script
+        defer
+        src="/dist/oonly.min.js"
+        data-project-id="68a482061f216e82510ebb19"
+        data-api="http://127.0.0.1:5000"
+        data-ws="ws://127.0.0.1:5000"
+        data-ver="v1"
+    ></script>
+
+    <div class="container">
+        <h1>🔄 Navigation Tracking Test</h1>
+        <p>This page tests SPA navigation tracking to ensure URL changes are properly detected and tracked.</p>
+        
+        <div class="current-url">
+            <strong>Current URL:</strong> <span id="current-url">Loading...</span>
+        </div>
+        
+        <h2>Test Navigation Methods:</h2>
+        
+        <div>
+            <button onclick="testPushState()">📍 Test pushState</button>
+            <button onclick="testReplaceState()">🔄 Test replaceState</button>
+            <button onclick="testHashChange()"># Test Hash Change</button>
+            <button onclick="testBack()">⬅️ Test Back</button>
+            <button onclick="testForward()">➡️ Test Forward</button>
+        </div>
+        
+        <div>
+            <button onclick="clearLog()">🧹 Clear Log</button>
+            <button onclick="checkSessionInfo()">📊 Check Session Info</button>
+        </div>
+        
+        <div class="log" id="log">Navigation events will appear here...</div>
+    </div>
+
+    <script>
+        let navigationCount = 0;
+        
+        // Update current URL display
+        function updateCurrentUrl() {
+            document.getElementById('current-url').textContent = window.location.href;
+        }
+        
+        // Log function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('log');
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        // Test pushState navigation
+        function testPushState() {
+            navigationCount++;
+            const newPath = `/test-page-${navigationCount}`;
+            const newUrl = window.location.origin + newPath;
+            
+            log(`🔄 Testing pushState to: ${newPath}`);
+            history.pushState({page: navigationCount}, `Test Page ${navigationCount}`, newPath);
+            document.title = `Test Page ${navigationCount}`;
+            updateCurrentUrl();
+            
+            // Check if oonly detected it
+            setTimeout(() => {
+                log(`✅ pushState completed. URL: ${window.location.href}`);
+            }, 100);
+        }
+        
+        // Test replaceState navigation
+        function testReplaceState() {
+            navigationCount++;
+            const newPath = `/replaced-page-${navigationCount}`;
+            
+            log(`🔄 Testing replaceState to: ${newPath}`);
+            history.replaceState({page: navigationCount}, `Replaced Page ${navigationCount}`, newPath);
+            document.title = `Replaced Page ${navigationCount}`;
+            updateCurrentUrl();
+            
+            setTimeout(() => {
+                log(`✅ replaceState completed. URL: ${window.location.href}`);
+            }, 100);
+        }
+        
+        // Test hash change
+        function testHashChange() {
+            const hash = `#section-${Date.now()}`;
+            
+            log(`🔄 Testing hash change to: ${hash}`);
+            window.location.hash = hash;
+            updateCurrentUrl();
+            
+            setTimeout(() => {
+                log(`✅ Hash change completed. URL: ${window.location.href}`);
+            }, 100);
+        }
+        
+        // Test back navigation
+        function testBack() {
+            log(`🔄 Testing history.back()`);
+            history.back();
+            
+            setTimeout(() => {
+                updateCurrentUrl();
+                log(`✅ Back navigation completed. URL: ${window.location.href}`);
+            }, 100);
+        }
+        
+        // Test forward navigation
+        function testForward() {
+            log(`🔄 Testing history.forward()`);
+            history.forward();
+            
+            setTimeout(() => {
+                updateCurrentUrl();
+                log(`✅ Forward navigation completed. URL: ${window.location.href}`);
+            }, 100);
+        }
+        
+        // Clear log
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+            log('📋 Log cleared');
+        }
+        
+        // Check session info
+        function checkSessionInfo() {
+            if (window.oonly && window.oonly.session) {
+                const sessionInfo = window.oonly.session.getInfo();
+                log(`📊 Session Info: ${JSON.stringify(sessionInfo, null, 2)}`);
+            } else {
+                log('❌ Oonly session API not available');
+            }
+        }
+        
+        // Listen for popstate events
+        window.addEventListener('popstate', (event) => {
+            log(`📥 popstate event received. State: ${JSON.stringify(event.state)}`);
+            updateCurrentUrl();
+        });
+        
+        // Listen for hashchange events
+        window.addEventListener('hashchange', (event) => {
+            log(`📥 hashchange event received. Old: ${event.oldURL}, New: ${event.newURL}`);
+            updateCurrentUrl();
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCurrentUrl();
+            log('🚀 Navigation test page loaded');
+            
+            // Test oonly availability
+            setTimeout(() => {
+                if (window.oonly) {
+                    log('✅ Oonly tracker loaded successfully');
+                    
+                    // Track a custom event to test
+                    window.oonly.track('navigation_test_page_load', {
+                        testVersion: '1.0',
+                        timestamp: Date.now()
+                    });
+                } else {
+                    log('❌ Oonly tracker not loaded');
+                }
+            }, 1000);
+        });
+        
+        // Monitor for console messages from oonly
+        const originalConsoleLog = console.log;
+        console.log = function(...args) {
+            if (args[0] && args[0].includes && args[0].includes('[oonly]')) {
+                log(`🔍 ${args.join(' ')}`);
+            }
+            originalConsoleLog.apply(console, args);
+        };
+    </script>
+</body>
+</html>

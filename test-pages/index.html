@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oonly Tracker Test - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .feature-card p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .test-section h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .test-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .test-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .test-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .test-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 10px;
+            margin: 0.5rem;
+            width: 200px;
+        }
+        
+        .test-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .section-tracker {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 2rem 0;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .test-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Oonly Tracker Script -->
+    <script
+        defer
+        src="/src/tracker.js"
+        data-project-id="68a482061f216e82510ebb19"
+        data-api="http://127.0.0.1:5000"
+        data-ws="ws://127.0.0.1:5000"
+        data-ver="v1"
+    ></script>
+
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">🎯 Oonly Test</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="spa.html">SPA Demo</a></li>
+                    <li><a href="forms.html">Forms</a></li>
+                    <li><a href="media.html">Media</a></li>
+                    <li><a href="ecommerce.html">E-commerce</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>Welcome to Oonly Tracker Test Suite</h1>
+            <p>Complete testing environment for session tracking, user journey analytics, and behavioral insights</p>
+            <a href="#features" class="cta-button">Explore Features</a>
+        </section>
+
+        <section id="features" class="features">
+            <div class="feature-card">
+                <h3>🔍 Session Tracking</h3>
+                <p>Track user sessions across traditional page loads and SPA navigation with comprehensive analytics</p>
+            </div>
+            <div class="feature-card">
+                <h3>📊 User Journey</h3>
+                <p>Monitor complete user journeys from entry to conversion with detailed interaction mapping</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎬 Session Recording</h3>
+                <p>Record user sessions with rrweb integration for complete behavioral analysis and replay</p>
+            </div>
+            <div class="feature-card">
+                <h3>📱 Cross-Platform</h3>
+                <p>Works seamlessly on desktop, mobile, and tablet devices with responsive tracking</p>
+            </div>
+        </section>
+
+        <section class="test-section" data-oonly-section="main-testing">
+            <h2>🧪 Interactive Testing Area</h2>
+            <p>This section is tracked using data-oonly-section for time-based analytics</p>
+            
+            <div class="test-buttons">
+                <button class="test-btn" onclick="trackCustomEvent('button_click', {button: 'test1'})">Track Custom Event</button>
+                <button class="test-btn" onclick="simulateRageClick()">Simulate Rage Click</button>
+                <button class="test-btn" onclick="testScrollTracking()">Test Scroll Tracking</button>
+                <button class="test-btn" onclick="testSegmentation()">Test Segmentation</button>
+                <button class="test-btn" onclick="identifyUser()">Identify User</button>
+                <button class="test-btn" onclick="testFormInteraction()">Form Interaction</button>
+            </div>
+            
+            <div style="margin-top: 1rem;">
+                <input type="text" class="test-input" placeholder="Test input tracking..." onchange="trackInputChange(this)">
+                <input type="email" class="test-input" placeholder="Email (sensitive)...">
+                <input type="password" class="test-input" placeholder="Password (masked)...">
+            </div>
+        </section>
+
+        <section class="section-tracker" data-oonly-section="feature-showcase">
+            <h2>📈 Analytics Features Showcase</h2>
+            <p>This section demonstrates various tracking capabilities:</p>
+            <ul style="margin-left: 2rem; margin-top: 1rem;">
+                <li>✅ Automatic page view tracking</li>
+                <li>✅ Click and interaction tracking</li>
+                <li>✅ Form submission and validation tracking</li>
+                <li>✅ Scroll depth and engagement tracking</li>
+                <li>✅ Session recording with rrweb</li>
+                <li>✅ Real-time WebSocket streaming</li>
+                <li>✅ User segmentation and properties</li>
+                <li>✅ External redirect handling</li>
+                <li>✅ Performance and Web Vitals tracking</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 Oonly Tracker Test Suite - Testing Traditional & SPA Navigation</p>
+        </footer>
+    </div>
+
+    <script>
+        // Test functions for interactive elements
+        function trackCustomEvent(eventName, properties) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track(eventName, properties);
+                alert(`Custom event "${eventName}" tracked successfully!`);
+            }
+        }
+
+        function simulateRageClick() {
+            const button = event.target;
+            // Simulate multiple rapid clicks
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const clickEvent = new MouseEvent('click', {
+                        bubbles: true,
+                        cancelable: true,
+                        clientX: button.offsetLeft + 10,
+                        clientY: button.offsetTop + 10
+                    });
+                    button.dispatchEvent(clickEvent);
+                }, i * 100);
+            }
+            alert('Rage click simulation completed!');
+        }
+
+        function testScrollTracking() {
+            // Scroll to different sections to test scroll depth tracking
+            window.scrollTo({ top: document.body.scrollHeight / 2, behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 1000);
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 2000);
+            alert('Scroll tracking test initiated!');
+        }
+
+        function testSegmentation() {
+            if (window.oonly && window.oonly.set) {
+                window.oonly.set({
+                    userType: 'premium',
+                    interests: ['analytics', 'tracking'],
+                    testUser: true
+                });
+                alert('User segmentation properties set!');
+            }
+        }
+
+        function identifyUser() {
+            if (window.oonly && window.oonly.identify) {
+                const userId = 'test_user_' + Date.now();
+                window.oonly.identify(userId, {
+                    name: 'Test User',
+                    email: 'test@example.com',
+                    plan: 'enterprise'
+                });
+                alert(`User identified as: ${userId}`);
+            }
+        }
+
+        function testFormInteraction() {
+            const form = document.createElement('form');
+            form.innerHTML = `
+                <input type="text" name="test_field" placeholder="Test form field">
+                <button type="submit">Submit Test</button>
+            `;
+            form.style.display = 'inline-block';
+            form.style.margin = '1rem';
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                alert('Form submission tracked!');
+                form.remove();
+            };
+            event.target.parentNode.appendChild(form);
+        }
+
+        function trackInputChange(input) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('input_change', {
+                    inputType: input.type,
+                    hasValue: !!input.value,
+                    valueLength: input.value.length
+                });
+            }
+        }
+
+        // Test external links
+        function createExternalLink(url, type) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.textContent = `Test ${type} redirect`;
+            link.style.margin = '0.5rem';
+            link.style.color = '#ff6b6b';
+            return link;
+        }
+
+        // Add some external links for redirect testing
+        window.addEventListener('load', () => {
+            const testSection = document.querySelector('.test-section');
+            const linkContainer = document.createElement('div');
+            linkContainer.style.marginTop = '1rem';
+            
+            linkContainer.appendChild(createExternalLink('https://stripe.com/checkout', 'Payment'));
+            linkContainer.appendChild(createExternalLink('https://github.com/login', 'Social Login'));
+            linkContainer.appendChild(createExternalLink('https://google.com', 'External'));
+            
+            testSection.appendChild(linkContainer);
+        });
+
+        // Simulate some automatic events for testing
+        setTimeout(() => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('page_engagement', {
+                    timeOnPage: 5000,
+                    section: 'hero'
+                });
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

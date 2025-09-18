@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Oonly Tracker Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .product-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .product-card h3 {
+            margin-bottom: 1rem;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+        
+        .product-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #a29bfe;
+            margin: 1rem 0;
+        }
+        
+        .product-features {
+            list-style: none;
+            margin: 1rem 0;
+        }
+        
+        .product-features li {
+            padding: 0.3rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .product-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #a29bfe;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(162, 155, 254, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .comparison-table {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .comparison-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+        }
+        
+        .filter-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Oonly Tracker Script -->
+    <script
+        defer
+        src="/src/tracker.js"
+        data-project-id="68a482061f216e82510ebb19"
+        data-api="http://127.0.0.1:5000"
+        data-ws="ws://127.0.0.1:5000"
+        data-ver="v1"
+    ></script>
+
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">🎯 Oonly Test</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="products.html" class="active">Products</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="spa.html">SPA Demo</a></li>
+                    <li><a href="forms.html">Forms</a></li>
+                    <li><a href="media.html">Media</a></li>
+                    <li><a href="ecommerce.html">E-commerce</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>Our Products</h1>
+            <p>Choose the perfect analytics solution for your business needs</p>
+        </section>
+
+        <section class="filter-section" data-oonly-section="product-filters">
+            <h2>🔍 Filter Products</h2>
+            <p>Use the filters below to find the perfect product for your needs</p>
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterProducts('all')">All Products</button>
+                <button class="filter-btn" onclick="filterProducts('analytics')">Analytics</button>
+                <button class="filter-btn" onclick="filterProducts('recording')">Session Recording</button>
+                <button class="filter-btn" onclick="filterProducts('enterprise')">Enterprise</button>
+                <button class="filter-btn" onclick="filterProducts('startup')">Startup</button>
+            </div>
+        </section>
+
+        <section class="products-grid" id="products-grid">
+            <div class="product-card" data-category="analytics startup" data-oonly-section="starter-product">
+                <h3>📊 Analytics Starter</h3>
+                <div class="product-price">$29/month</div>
+                <p>Perfect for small websites and blogs. Get essential tracking and insights.</p>
+                <ul class="product-features">
+                    <li>Up to 50,000 page views</li>
+                    <li>Basic user tracking</li>
+                    <li>Real-time analytics</li>
+                    <li>Email support</li>
+                    <li>7-day data retention</li>
+                </ul>
+                <button class="btn-primary" onclick="selectProduct('starter', 29)">Choose Starter</button>
+            </div>
+
+            <div class="product-card" data-category="analytics recording" data-oonly-section="professional-product">
+                <h3>🚀 Professional Analytics</h3>
+                <div class="product-price">$99/month</div>
+                <p>Advanced tracking with session recording for growing businesses.</p>
+                <ul class="product-features">
+                    <li>Up to 500,000 page views</li>
+                    <li>Session recording</li>
+                    <li>User segmentation</li>
+                    <li>Advanced funnels</li>
+                    <li>30-day data retention</li>
+                    <li>Priority support</li>
+                </ul>
+                <button class="btn-primary" onclick="selectProduct('professional', 99)">Choose Professional</button>
+            </div>
+
+            <div class="product-card" data-category="analytics recording enterprise" data-oonly-section="enterprise-product">
+                <h3>🏢 Enterprise Analytics</h3>
+                <div class="product-price">$299/month</div>
+                <p>Complete analytics solution with advanced features and dedicated support.</p>
+                <ul class="product-features">
+                    <li>Unlimited page views</li>
+                    <li>Advanced session recording</li>
+                    <li>Custom segmentation</li>
+                    <li>API access</li>
+                    <li>1-year data retention</li>
+                    <li>24/7 dedicated support</li>
+                    <li>Custom integrations</li>
+                </ul>
+                <button class="btn-primary" onclick="selectProduct('enterprise', 299)">Choose Enterprise</button>
+            </div>
+        </section>
+
+        <section class="comparison-table">
+            <h2>📋 Feature Comparison</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Starter</th>
+                        <th>Professional</th>
+                        <th>Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Page Views</td>
+                        <td>50,000</td>
+                        <td>500,000</td>
+                        <td>Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td>Session Recording</td>
+                        <td>❌</td>
+                        <td>✅</td>
+                        <td>✅ Advanced</td>
+                    </tr>
+                    <tr>
+                        <td>User Segmentation</td>
+                        <td>Basic</td>
+                        <td>Advanced</td>
+                        <td>Custom</td>
+                    </tr>
+                    <tr>
+                        <td>API Access</td>
+                        <td>❌</td>
+                        <td>Limited</td>
+                        <td>Full</td>
+                    </tr>
+                    <tr>
+                        <td>Support</td>
+                        <td>Email</td>
+                        <td>Priority</td>
+                        <td>24/7 Dedicated</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="interaction-area" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 2rem; border-radius: 20px; margin: 2rem 0;">
+            <h2>🧪 Test Product Interactions</h2>
+            <p>These buttons test various product-related tracking events.</p>
+            
+            <button class="btn-secondary" onclick="trackProductView()">Track Product View</button>
+            <button class="btn-secondary" onclick="compareProducts()">Compare Products</button>
+            <button class="btn-secondary" onclick="requestDemo()">Request Demo</button>
+            <button class="btn-secondary" onclick="trackPriceCheck()">Check Pricing</button>
+            
+            <div style="margin-top: 1rem;">
+                <p id="interaction-feedback">Select any product or filter to see tracking in action!</p>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem 0; opacity: 0.8;">
+            <p>&copy; 2024 Oonly Tracker - Product Catalog Test</p>
+        </footer>
+    </div>
+
+    <script>
+        let selectedProducts = [];
+        let currentFilter = 'all';
+
+        // Track page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('products_page_view', {
+                    timestamp: Date.now(),
+                    referrer: document.referrer,
+                    productsVisible: document.querySelectorAll('.product-card').length
+                });
+            }
+        });
+
+        function filterProducts(category) {
+            currentFilter = category;
+            const products = document.querySelectorAll('.product-card');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            // Update active filter button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide products
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category.includes(category)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+            
+            // Track filter usage
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('product_filter', {
+                    filter: category,
+                    timestamp: Date.now(),
+                    visibleProducts: Array.from(products).filter(p => p.style.display !== 'none').length
+                });
+            }
+            
+            updateFeedback(`Filtered products by: ${category}`);
+        }
+
+        function selectProduct(productName, price) {
+            selectedProducts.push({
+                name: productName,
+                price: price,
+                timestamp: Date.now()
+            });
+            
+            // Track product selection
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('product_select', {
+                    productName: productName,
+                    price: price,
+                    currentFilter: currentFilter,
+                    timestamp: Date.now()
+                });
+                
+                // Update user properties
+                if (window.oonly.set) {
+                    window.oonly.set({
+                        interestedProduct: productName,
+                        priceRange: price < 50 ? 'budget' : price < 200 ? 'mid' : 'premium',
+                        lastProductInteraction: Date.now()
+                    });
+                }
+            }
+            
+            updateFeedback(`Selected ${productName} plan ($${price}/month)`);
+            
+            // Simulate going to checkout
+            setTimeout(() => {
+                if (confirm(`Proceed to checkout for ${productName} plan?`)) {
+                    window.location.href = 'checkout.html?product=' + productName + '&price=' + price;
+                }
+            }, 1000);
+        }
+
+        function trackProductView() {
+            const visibleProducts = Array.from(document.querySelectorAll('.product-card'))
+                .filter(p => p.style.display !== 'none')
+                .map(p => p.querySelector('h3').textContent);
+                
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('detailed_product_view', {
+                    visibleProducts: visibleProducts,
+                    currentFilter: currentFilter,
+                    timeOnPage: Date.now() - performance.navigationStart,
+                    timestamp: Date.now()
+                });
+            }
+            
+            updateFeedback(`Tracked view of ${visibleProducts.length} products`);
+        }
+
+        function compareProducts() {
+            const visibleProducts = Array.from(document.querySelectorAll('.product-card'))
+                .filter(p => p.style.display !== 'none');
+                
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('product_comparison', {
+                    productsCompared: visibleProducts.length,
+                    comparisonType: 'table_view',
+                    currentFilter: currentFilter,
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Scroll to comparison table
+            document.querySelector('.comparison-table').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            updateFeedback('Initiated product comparison');
+        }
+
+        function requestDemo() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('demo_request', {
+                    source: 'products_page',
+                    selectedProducts: selectedProducts,
+                    currentFilter: currentFilter,
+                    timestamp: Date.now()
+                });
+                
+                // Update user properties to mark as demo requester
+                if (window.oonly.set) {
+                    window.oonly.set({
+                        demoRequested: true,
+                        leadScore: 75,
+                        leadSource: 'products_page'
+                    });
+                }
+            }
+            
+            updateFeedback('Demo request tracked - Sales team will contact you!');
+        }
+
+        function trackPriceCheck() {
+            const prices = Array.from(document.querySelectorAll('.product-price'))
+                .map(p => p.textContent);
+                
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('pricing_analysis', {
+                    pricesViewed: prices,
+                    priceRange: prices.length > 0 ? {
+                        min: Math.min(...prices.map(p => parseInt(p.replace(/[^0-9]/g, '')))),
+                        max: Math.max(...prices.map(p => parseInt(p.replace(/[^0-9]/g, ''))))
+                    } : null,
+                    timestamp: Date.now()
+                });
+            }
+            
+            updateFeedback('Price analysis tracked');
+        }
+
+        function updateFeedback(message) {
+            document.getElementById('interaction-feedback').textContent = message;
+        }
+
+        // Track product card hovers
+        document.querySelectorAll('.product-card').forEach(card => {
+            let hoverStart = null;
+            
+            card.addEventListener('mouseenter', () => {
+                hoverStart = Date.now();
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                if (hoverStart) {
+                    const hoverDuration = Date.now() - hoverStart;
+                    const productName = card.querySelector('h3').textContent;
+                    
+                    if (window.oonly && window.oonly.track) {
+                        window.oonly.track('product_hover', {
+                            productName: productName,
+                            hoverDuration: hoverDuration,
+                            timestamp: Date.now()
+                        });
+                    }
+                    hoverStart = null;
+                }
+            });
+        });
+
+        // Track scroll depth on products page
+        let maxScrollDepth = 0;
+        window.addEventListener('scroll', () => {
+            const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+            if (scrollPercent > maxScrollDepth && scrollPercent % 25 === 0) {
+                maxScrollDepth = scrollPercent;
+                if (window.oonly && window.oonly.track) {
+                    window.oonly.track('products_scroll_milestone', {
+                        depth: scrollPercent,
+                        currentFilter: currentFilter,
+                        timestamp: Date.now()
+                    });
+                }
+            }
+        });
+
+        // Track time spent on products page
+        let pageStartTime = Date.now();
+        window.addEventListener('beforeunload', () => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('products_page_exit', {
+                    timeSpent: Date.now() - pageStartTime,
+                    productsSelected: selectedProducts.length,
+                    filtersUsed: currentFilter !== 'all',
+                    maxScrollDepth: maxScrollDepth
+                });
+            }
+        });
+    </script>
+</body>
+</html>

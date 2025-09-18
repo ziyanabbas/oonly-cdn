@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA Demo - Oonly Tracker Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .spa-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .spa-nav h2 {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .spa-nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .spa-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .spa-btn:hover,
+        .spa-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .spa-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            min-height: 400px;
+        }
+        
+        .route {
+            display: none;
+        }
+        
+        .route.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00b894;
+            display: block;
+        }
+        
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb a {
+            color: #00b894;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn-action {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+        }
+        
+        .tracking-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #00b894;
+        }
+        
+        .route-content h1 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .route-content h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .route-content h3 {
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Oonly Tracker Script -->
+    <script
+        defer
+        src="/src/tracker.js"
+        data-project-id="68a482061f216e82510ebb19"
+        data-api="http://127.0.0.1:5000"
+        data-ws="ws://127.0.0.1:5000"
+        data-ver="v1"
+    ></script>
+
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">🎯 Oonly Test</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="spa.html" class="active">SPA Demo</a></li>
+                    <li><a href="forms.html">Forms</a></li>
+                    <li><a href="media.html">Media</a></li>
+                    <li><a href="ecommerce.html">E-commerce</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="spa-nav">
+            <h2>🔄 Single Page Application Navigation Test</h2>
+            <p style="text-align: center; margin-bottom: 1rem;">This simulates SPA routing without page reloads. The tracker should detect URL changes and route navigation.</p>
+            
+            <div class="spa-nav-buttons">
+                <button class="spa-btn active" onclick="navigateToRoute('dashboard')">📊 Dashboard</button>
+                <button class="spa-btn" onclick="navigateToRoute('analytics')">📈 Analytics</button>
+                <button class="spa-btn" onclick="navigateToRoute('users')">👥 Users</button>
+                <button class="spa-btn" onclick="navigateToRoute('settings')">⚙️ Settings</button>
+                <button class="spa-btn" onclick="navigateToRoute('reports')">📋 Reports</button>
+                <button class="spa-btn" onclick="navigateToRoute('profile')">👤 Profile</button>
+            </div>
+        </section>
+
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="#" onclick="navigateToRoute('dashboard')">Home</a> > <span id="current-route">Dashboard</span>
+        </div>
+
+        <section class="spa-content" id="spa-content">
+            <!-- Dashboard Route -->
+            <div class="route active" id="dashboard" data-oonly-section="spa-dashboard">
+                <div class="route-content">
+                    <h1>📊 Dashboard Overview</h1>
+                    <p>Welcome to your analytics dashboard. This is a simulated SPA route that demonstrates client-side navigation tracking.</p>
+                    
+                    <div class="tracking-info">
+                        <strong>🎯 Tracking Test:</strong> This route change should be tracked as a SPA navigation event with URL update.
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-number">2,547</span>
+                            <span>Total Visitors</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">1,234</span>
+                            <span>Page Views</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">5.2</span>
+                            <span>Avg Session (min)</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">68%</span>
+                            <span>Bounce Rate</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-action" onclick="trackDashboardAction('refresh')">Refresh Data</button>
+                        <button class="btn-action" onclick="trackDashboardAction('export')">Export Report</button>
+                        <button class="btn-action" onclick="trackDashboardAction('filter')">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Route -->
+            <div class="route" id="analytics" data-oonly-section="spa-analytics">
+                <div class="route-content">
+                    <h1>📈 Analytics Deep Dive</h1>
+                    <p>Advanced analytics and insights for your website performance.</p>
+                    
+                    <div class="tracking-info">
+                        <strong>🎯 Tracking Test:</strong> Navigation from Dashboard → Analytics should be tracked with session recording.
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h3>🔥 Real-time Analytics</h3>
+                            <p>See visitor activity as it happens with real-time data streaming and WebSocket connections.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🎬 Session Recording</h3>
+                            <p>Watch exactly how users interact with your site through detailed session replays.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>📊 Custom Events</h3>
+                            <p>Track specific actions and conversions that matter to your business goals.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🎯 User Segmentation</h3>
+                            <p>Analyze different user groups and their behaviors for targeted insights.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-action" onclick="trackAnalyticsAction('generate_report')">Generate Report</button>
+                        <button class="btn-action" onclick="trackAnalyticsAction('setup_goals')">Setup Goals</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Route -->
+            <div class="route" id="users" data-oonly-section="spa-users">
+                <div class="route-content">
+                    <h1>👥 User Management</h1>
+                    <p>Manage and analyze your user base with detailed profiles and segmentation.</p>
+                    
+                    <div class="tracking-info">
+                        <strong>🎯 Tracking Test:</strong> User management interactions should be tracked with detailed event properties.
+                    </div>
+                    
+                    <h2>User Segments</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="selectUserSegment('new_users')">
+                            <h3>🆕 New Users</h3>
+                            <p>Users who signed up in the last 30 days</p>
+                            <div class="stat-number" style="font-size: 1.5rem;">1,247</div>
+                        </div>
+                        <div class="feature-card" onclick="selectUserSegment('active_users')">
+                            <h3>✅ Active Users</h3>
+                            <p>Users with recent activity</p>
+                            <div class="stat-number" style="font-size: 1.5rem;">3,892</div>
+                        </div>
+                        <div class="feature-card" onclick="selectUserSegment('premium_users')">
+                            <h3>💎 Premium Users</h3>
+                            <p>Users with paid subscriptions</p>
+                            <div class="stat-number" style="font-size: 1.5rem;">567</div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-action" onclick="trackUserAction('create_segment')">Create Segment</button>
+                        <button class="btn-action" onclick="trackUserAction('export_users')">Export Users</button>
+                        <button class="btn-action" onclick="trackUserAction('send_campaign')">Send Campaign</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Route -->
+            <div class="route" id="settings" data-oonly-section="spa-settings">
+                <div class="route-content">
+                    <h1>⚙️ Settings & Configuration</h1>
+                    <p>Configure your analytics setup, privacy settings, and integrations.</p>
+                    
+                    <div class="tracking-info">
+                        <strong>🎯 Tracking Test:</strong> Settings changes should be tracked with before/after values.
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h3>🔒 Privacy Controls</h3>
+                            <p>Configure data collection and privacy settings</p>
+                            <button class="spa-btn" onclick="togglePrivacySetting('data_collection')" style="margin-top: 1rem;">Toggle Data Collection</button>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🔌 Integrations</h3>
+                            <p>Connect with your favorite tools and platforms</p>
+                            <button class="spa-btn" onclick="manageIntegration('google_analytics')" style="margin-top: 1rem;">Manage Integrations</button>
+                        </div>
+                        <div class="feature-card">
+                            <h3>📧 Notifications</h3>
+                            <p>Set up alerts and email notifications</p>
+                            <button class="spa-btn" onclick="configureNotifications()" style="margin-top: 1rem;">Configure Alerts</button>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🎨 Customization</h3>
+                            <p>Customize dashboard appearance and layout</p>
+                            <button class="spa-btn" onclick="customizeDashboard()" style="margin-top: 1rem;">Customize Layout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Route -->
+            <div class="route" id="reports" data-oonly-section="spa-reports">
+                <div class="route-content">
+                    <h1>📋 Reports & Insights</h1>
+                    <p>Generate detailed reports and gain insights from your analytics data.</p>
+                    
+                    <div class="tracking-info">
+                        <strong>🎯 Tracking Test:</strong> Report generation and downloads should be tracked with report types.
+                    </div>
+                    
+                    <h2>Available Reports</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="generateReport('traffic')">
+                            <h3>📈 Traffic Report</h3>
+                            <p>Detailed analysis of website traffic patterns and sources</p>
+                        </div>
+                        <div class="feature-card" onclick="generateReport('conversion')">
+                            <h3>🎯 Conversion Report</h3>
+                            <p>Track goals and conversion funnel performance</p>
+                        </div>
+                        <div class="feature-card" onclick="generateReport('user_behavior')">
+                            <h3>👤 User Behavior Report</h3>
+                            <p>Analyze user interactions and session recordings</p>
+                        </div>
+                        <div class="feature-card" onclick="generateReport('performance')">
+                            <h3>⚡ Performance Report</h3>
+                            <p>Website speed and performance metrics analysis</p>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-action" onclick="scheduleReport()">Schedule Reports</button>
+                        <button class="btn-action" onclick="customReport()">Create Custom Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Route -->
+            <div class="route" id="profile" data-oonly-section="spa-profile">
+                <div class="route-content">
+                    <h1>👤 User Profile</h1>
+                    <p>Manage your account settings and preferences.</p>
+                    
+                    <div class="tracking-info">
+                        <strong>🎯 Tracking Test:</strong> Profile updates should be tracked with user identification.
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h3>👤 Personal Info</h3>
+                            <p>Name: John Doe<br>Email: john@example.com<br>Role: Admin</p>
+                            <button class="spa-btn" onclick="editProfile()" style="margin-top: 1rem;">Edit Profile</button>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🔐 Security</h3>
+                            <p>Password and two-factor authentication settings</p>
+                            <button class="spa-btn" onclick="changePassword()" style="margin-top: 1rem;">Change Password</button>
+                        </div>
+                        <div class="feature-card">
+                            <h3>📊 Usage Stats</h3>
+                            <p>Your analytics usage and limits</p>
+                            <div class="stat-number" style="font-size: 1.5rem;">85%</div>
+                            <small>Monthly quota used</small>
+                        </div>
+                        <div class="feature-card">
+                            <h3>💳 Billing</h3>
+                            <p>Subscription and payment information</p>
+                            <button class="spa-btn" onclick="manageBilling()" style="margin-top: 1rem;">Manage Billing</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem 0; opacity: 0.8;">
+            <p>&copy; 2024 Oonly Tracker - SPA Navigation Test</p>
+        </footer>
+    </div>
+
+    <script>
+        let currentRoute = 'dashboard';
+        let navigationHistory = [];
+
+        // Track initial SPA page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('spa_initial_load', {
+                    initialRoute: currentRoute,
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Update URL without page reload
+            updateURL(currentRoute);
+        });
+
+        function navigateToRoute(route) {
+            const previousRoute = currentRoute;
+            
+            // Track the navigation
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('spa_navigation', {
+                    from: previousRoute,
+                    to: route,
+                    navigationType: 'button_click',
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Update navigation history
+            navigationHistory.push({
+                from: previousRoute,
+                to: route,
+                timestamp: Date.now()
+            });
+            
+            // Update UI
+            updateRoute(route);
+            updateURL(route);
+            updateBreadcrumb(route);
+            updateActiveButton(route);
+            
+            currentRoute = route;
+            
+            // Simulate pushState for SPA navigation
+            const newURL = `${window.location.pathname}#/${route}`;
+            history.pushState({ route: route }, '', newURL);
+        }
+
+        function updateRoute(route) {
+            // Hide all routes
+            document.querySelectorAll('.route').forEach(r => {
+                r.classList.remove('active');
+            });
+            
+            // Show selected route
+            document.getElementById(route).classList.add('active');
+        }
+
+        function updateURL(route) {
+            // Update URL hash to simulate SPA routing
+            window.location.hash = `/${route}`;
+        }
+
+        function updateBreadcrumb(route) {
+            const routeNames = {
+                'dashboard': 'Dashboard',
+                'analytics': 'Analytics',
+                'users': 'Users',
+                'settings': 'Settings',
+                'reports': 'Reports',
+                'profile': 'Profile'
+            };
+            
+            document.getElementById('current-route').textContent = routeNames[route] || route;
+        }
+
+        function updateActiveButton(route) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.spa-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to current button
+            event.target.classList.add('active');
+        }
+
+        // Handle browser back/forward navigation
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.route) {
+                const route = event.state.route;
+                
+                if (window.oonly && window.oonly.track) {
+                    window.oonly.track('spa_navigation', {
+                        from: currentRoute,
+                        to: route,
+                        navigationType: 'popstate',
+                        timestamp: Date.now()
+                    });
+                }
+                
+                updateRoute(route);
+                updateBreadcrumb(route);
+                currentRoute = route;
+            }
+        });
+
+        // Route-specific action functions
+        function trackDashboardAction(action) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('dashboard_action', {
+                    action: action,
+                    route: 'dashboard',
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Dashboard action: ${action}`);
+        }
+
+        function trackAnalyticsAction(action) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('analytics_action', {
+                    action: action,
+                    route: 'analytics',
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Analytics action: ${action}`);
+        }
+
+        function selectUserSegment(segment) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('user_segment_select', {
+                    segment: segment,
+                    route: 'users',
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Visual feedback
+            event.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            setTimeout(() => {
+                event.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+            }, 300);
+        }
+
+        function trackUserAction(action) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('user_management_action', {
+                    action: action,
+                    route: 'users',
+                    timestamp: Date.now()
+                });
+            }
+            alert(`User action: ${action}`);
+        }
+
+        function togglePrivacySetting(setting) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('privacy_setting_toggle', {
+                    setting: setting,
+                    newValue: Math.random() > 0.5, // Random boolean for demo
+                    route: 'settings',
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Privacy setting toggled: ${setting}`);
+        }
+
+        function manageIntegration(integration) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('integration_manage', {
+                    integration: integration,
+                    route: 'settings',
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Managing integration: ${integration}`);
+        }
+
+        function configureNotifications() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('notifications_configure', {
+                    route: 'settings',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Notification settings configured');
+        }
+
+        function customizeDashboard() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('dashboard_customize', {
+                    route: 'settings',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Dashboard customization opened');
+        }
+
+        function generateReport(reportType) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('report_generate', {
+                    reportType: reportType,
+                    route: 'reports',
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Simulate report generation
+            const button = event.currentTarget;
+            button.style.opacity = '0.5';
+            button.textContent = 'Generating...';
+            
+            setTimeout(() => {
+                button.style.opacity = '1';
+                button.querySelector('h3').textContent = button.querySelector('h3').textContent;
+                alert(`${reportType} report generated successfully!`);
+            }, 2000);
+        }
+
+        function scheduleReport() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('report_schedule', {
+                    route: 'reports',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Report scheduling configured');
+        }
+
+        function customReport() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('custom_report_create', {
+                    route: 'reports',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Custom report builder opened');
+        }
+
+        function editProfile() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('profile_edit', {
+                    route: 'profile',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Profile editor opened');
+        }
+
+        function changePassword() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('password_change', {
+                    route: 'profile',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Password change form opened');
+        }
+
+        function manageBilling() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('billing_manage', {
+                    route: 'profile',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Billing management opened');
+        }
+
+        // Track time spent on each route
+        let routeStartTime = Date.now();
+        
+        function trackRouteTime(route) {
+            const timeSpent = Date.now() - routeStartTime;
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('spa_route_time', {
+                    route: route,
+                    timeSpent: timeSpent,
+                    timestamp: Date.now()
+                });
+            }
+            
+            routeStartTime = Date.now();
+        }
+
+        // Track when user leaves the SPA
+        window.addEventListener('beforeunload', () => {
+            trackRouteTime(currentRoute);
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('spa_session_end', {
+                    finalRoute: currentRoute,
+                    navigationHistory: navigationHistory,
+                    totalRoutes: navigationHistory.length,
+                    timestamp: Date.now()
+                });
+            }
+        });
+
+        // Update route start time when route changes
+        const originalNavigateToRoute = navigateToRoute;
+        navigateToRoute = function(route) {
+            trackRouteTime(currentRoute);
+            originalNavigateToRoute(route);
+        };
+    </script>
+</body>
+</html>

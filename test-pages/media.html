@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Testing - Oonly Tracker Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .media-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .media-container h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .tracking-info {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .media-element {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+        }
+        
+        .media-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .media-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .media-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .media-stats {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 8px;
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .playlist-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+        
+        .playlist-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .playlist-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .playlist-item.playing {
+            background: rgba(102, 126, 234, 0.3);
+            border-left: 4px solid #667eea;
+        }
+        
+        .playlist-thumbnail {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .playlist-info {
+            flex: 1;
+        }
+        
+        .playlist-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .playlist-duration {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .live-stream-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+        
+        .live-indicator {
+            background: #e74c3c;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .viewer-count {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .live-stream-wrapper {
+            position: relative;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .fake-stream {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .interactive-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .control-group {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .control-group h3 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        @media (max-width: 768px) {
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .media-controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Oonly Tracker Script -->
+    <script
+        defer
+        src="/src/tracker.js"
+        data-project-id="68a482061f216e82510ebb19"
+        data-api="http://127.0.0.1:5000"
+        data-ws="ws://127.0.0.1:5000"
+        data-ver="v1"
+    ></script>
+
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">🎯 Oonly Test</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="spa.html">SPA Demo</a></li>
+                    <li><a href="forms.html">Forms</a></li>
+                    <li><a href="media.html" class="active">Media</a></li>
+                    <li><a href="ecommerce.html">E-commerce</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>🎬 Media Tracking Test Suite</h1>
+            <p>Comprehensive testing for video, audio, and media interaction analytics</p>
+        </section>
+
+        <section class="media-grid">
+            <!-- Video Player -->
+            <div class="media-container" data-oonly-section="video-player">
+                <h2>🎥 Video Player Testing</h2>
+                <div class="tracking-info">
+                    <strong>🎯 Testing:</strong> Video play/pause, progress tracking, completion rates, seek events, and viewing patterns
+                </div>
+                
+                <video 
+                    class="media-element" 
+                    controls 
+                    preload="metadata"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' fill='%23667eea'/%3E%3Ctext x='400' y='225' text-anchor='middle' fill='white' font-size='24' font-family='Arial'%3EDemo Video Thumbnail%3C/text%3E%3C/svg%3E"
+                    onloadstart="trackMediaEvent('video', 'loadstart')"
+                    onloadedmetadata="trackMediaEvent('video', 'loadedmetadata')"
+                    oncanplay="trackMediaEvent('video', 'canplay')"
+                    onplay="trackMediaEvent('video', 'play')"
+                    onpause="trackMediaEvent('video', 'pause')"
+                    onended="trackMediaEvent('video', 'ended')"
+                    onseeking="trackMediaEvent('video', 'seeking')"
+                    onseeked="trackMediaEvent('video', 'seeked')"
+                    ontimeupdate="trackVideoProgress(this)"
+                    onvolumechange="trackMediaEvent('video', 'volumechange')"
+                    onfullscreenchange="trackMediaEvent('video', 'fullscreenchange')"
+                >
+                    <!-- Sample video using Big Buck Bunny (Creative Commons) -->
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                    <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+                    <p>Your browser doesn't support HTML5 video. <a href="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">Download the video</a>.</p>
+                </video>
+                
+                <div class="media-controls">
+                    <button class="media-btn" onclick="playPauseVideo()">⏯️ Play/Pause</button>
+                    <button class="media-btn" onclick="seekVideo(10)">⏩ +10s</button>
+                    <button class="media-btn" onclick="seekVideo(-10)">⏪ -10s</button>
+                    <button class="media-btn" onclick="changeVolume(0.5)">🔉 50%</button>
+                    <button class="media-btn" onclick="toggleMute()">🔇 Mute</button>
+                    <button class="media-btn" onclick="changePlaybackRate(1.5)">⚡ 1.5x</button>
+                </div>
+                
+                <div class="media-stats" id="video-stats">
+                    <div class="stat-row">
+                        <span>Duration:</span>
+                        <span id="video-duration">--:--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Current Time:</span>
+                        <span id="video-current">--:--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Progress:</span>
+                        <span id="video-progress">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="video-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="media-container" data-oonly-section="audio-player">
+                <h2>🎵 Audio Player Testing</h2>
+                <div class="tracking-info">
+                    <strong>🎯 Testing:</strong> Audio playback, progress tracking, loop behavior, and audio interaction patterns
+                </div>
+                
+                <audio 
+                    class="media-element" 
+                    controls 
+                    preload="metadata"
+                    onloadstart="trackMediaEvent('audio', 'loadstart')"
+                    onloadedmetadata="trackMediaEvent('audio', 'loadedmetadata')"
+                    oncanplay="trackMediaEvent('audio', 'canplay')"
+                    onplay="trackMediaEvent('audio', 'play')"
+                    onpause="trackMediaEvent('audio', 'pause')"
+                    onended="trackMediaEvent('audio', 'ended')"
+                    onseeking="trackMediaEvent('audio', 'seeking')"
+                    onseeked="trackMediaEvent('audio', 'seeked')"
+                    ontimeupdate="trackAudioProgress(this)"
+                    onvolumechange="trackMediaEvent('audio', 'volumechange')"
+                >
+                    <!-- Sample audio file -->
+                    <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+                    <source src="https://file-examples.com/storage/fe86dcefca1fac6004b8b47/2017/11/file_example_MP3_700KB.mp3" type="audio/mpeg">
+                    <p>Your browser doesn't support HTML5 audio. <a href="https://file-examples.com/storage/fe86dcefca1fac6004b8b47/2017/11/file_example_MP3_700KB.mp3">Download the audio</a>.</p>
+                </audio>
+                
+                <div class="media-controls">
+                    <button class="media-btn" onclick="playPauseAudio()">⏯️ Play/Pause</button>
+                    <button class="media-btn" onclick="restartAudio()">⏮️ Restart</button>
+                    <button class="media-btn" onclick="toggleAudioLoop()">🔁 Loop</button>
+                    <button class="media-btn" onclick="changeAudioVolume(0.3)">🔈 30%</button>
+                    <button class="media-btn" onclick="toggleAudioMute()">🔇 Mute</button>
+                </div>
+                
+                <div class="media-stats" id="audio-stats">
+                    <div class="stat-row">
+                        <span>Duration:</span>
+                        <span id="audio-duration">--:--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Current Time:</span>
+                        <span id="audio-current">--:--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Progress:</span>
+                        <span id="audio-progress">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="audio-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Media Playlist -->
+        <section class="playlist-container" data-oonly-section="media-playlist">
+            <h2>📋 Media Playlist Testing</h2>
+            <div class="tracking-info">
+                <strong>🎯 Testing:</strong> Playlist interactions, track changes, skip patterns, and listening behavior
+            </div>
+            
+            <div class="playlist-item" onclick="playPlaylistItem(0, 'Introduction to Analytics')">
+                <div class="playlist-thumbnail">🎬</div>
+                <div class="playlist-info">
+                    <div class="playlist-title">Introduction to Analytics</div>
+                    <div class="playlist-duration">5:32</div>
+                </div>
+            </div>
+            
+            <div class="playlist-item" onclick="playPlaylistItem(1, 'Setting Up Tracking')">
+                <div class="playlist-thumbnail">⚙️</div>
+                <div class="playlist-info">
+                    <div class="playlist-title">Setting Up Tracking</div>
+                    <div class="playlist-duration">8:45</div>
+                </div>
+            </div>
+            
+            <div class="playlist-item" onclick="playPlaylistItem(2, 'Understanding User Behavior')">
+                <div class="playlist-thumbnail">👥</div>
+                <div class="playlist-info">
+                    <div class="playlist-title">Understanding User Behavior</div>
+                    <div class="playlist-duration">12:18</div>
+                </div>
+            </div>
+            
+            <div class="playlist-item" onclick="playPlaylistItem(3, 'Advanced Analytics Features')">
+                <div class="playlist-thumbnail">📊</div>
+                <div class="playlist-info">
+                    <div class="playlist-title">Advanced Analytics Features</div>
+                    <div class="playlist-duration">15:27</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Stream Simulation -->
+        <section class="live-stream-container" data-oonly-section="live-stream">
+            <h2>🔴 Live Stream Testing</h2>
+            <div class="tracking-info">
+                <strong>🎯 Testing:</strong> Live stream interactions, viewer engagement, chat activity, and real-time analytics
+            </div>
+            
+            <div class="live-indicator">🔴 LIVE</div>
+            
+            <div class="live-stream-wrapper">
+                <div class="fake-stream">
+                    <div>
+                        <h3>🎯 Oonly Analytics Live Demo</h3>
+                        <p>Real-time tracking demonstration</p>
+                        <p style="font-size: 1rem; margin-top: 1rem;">
+                            Click the controls below to simulate live interactions
+                        </p>
+                    </div>
+                </div>
+                <div class="viewer-count" id="viewer-count">👁️ 1,247 viewers</div>
+            </div>
+            
+            <div class="media-controls">
+                <button class="media-btn" onclick="joinLiveStream()">📱 Join Stream</button>
+                <button class="media-btn" onclick="sendChatMessage()">💬 Send Chat</button>
+                <button class="media-btn" onclick="reactToStream('like')">👍 Like</button>
+                <button class="media-btn" onclick="reactToStream('love')">❤️ Love</button>
+                <button class="media-btn" onclick="shareStream()">📤 Share</button>
+                <button class="media-btn" onclick="reportStream()">🚨 Report</button>
+            </div>
+        </section>
+
+        <!-- Interactive Media Controls -->
+        <section class="interactive-controls">
+            <div class="control-group">
+                <h3>🎛️ Playback Controls</h3>
+                <button class="media-btn" onclick="testBatchPlayback()">Test Batch Playback</button>
+                <button class="media-btn" onclick="simulateABTest()">A/B Test Players</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>📊 Analytics Tests</h3>
+                <button class="media-btn" onclick="trackCustomMediaEvent()">Custom Event</button>
+                <button class="media-btn" onclick="testMediaSegmentation()">Test Segmentation</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>🔧 Quality Controls</h3>
+                <button class="media-btn" onclick="changeVideoQuality()">Change Quality</button>
+                <button class="media-btn" onclick="testBuffering()">Simulate Buffering</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>🌐 Sharing & Social</h3>
+                <button class="media-btn" onclick="shareMedia('twitter')">Share on Twitter</button>
+                <button class="media-btn" onclick="shareMedia('facebook')">Share on Facebook</button>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem 0; opacity: 0.8;">
+            <p>&copy; 2024 Oonly Tracker - Media & Video Analytics Testing</p>
+        </footer>
+    </div>
+
+    <script>
+        let mediaStats = {
+            videoPlays: 0,
+            audioPlays: 0,
+            totalPlayTime: 0,
+            completions: 0,
+            seekEvents: 0
+        };
+        
+        let currentPlaylistItem = -1;
+        let mediaStartTimes = {};
+
+        // Track page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('media_page_view', {
+                    hasVideo: !!document.querySelector('video'),
+                    hasAudio: !!document.querySelector('audio'),
+                    playlistItems: document.querySelectorAll('.playlist-item').length,
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Update viewer count periodically
+            updateViewerCount();
+            setInterval(updateViewerCount, 5000);
+        });
+
+        // Generic media event tracking
+        function trackMediaEvent(mediaType, eventType) {
+            const mediaElement = document.querySelector(mediaType);
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('media_event', {
+                    mediaType: mediaType,
+                    eventType: eventType,
+                    currentTime: mediaElement ? Math.round(mediaElement.currentTime) : 0,
+                    duration: mediaElement ? Math.round(mediaElement.duration) : 0,
+                    volume: mediaElement ? Math.round(mediaElement.volume * 100) : 0,
+                    muted: mediaElement ? mediaElement.muted : false,
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Update stats
+            if (eventType === 'play') {
+                if (mediaType === 'video') mediaStats.videoPlays++;
+                if (mediaType === 'audio') mediaStats.audioPlays++;
+                mediaStartTimes[mediaType] = Date.now();
+            } else if (eventType === 'pause' || eventType === 'ended') {
+                if (mediaStartTimes[mediaType]) {
+                    mediaStats.totalPlayTime += Date.now() - mediaStartTimes[mediaType];
+                    delete mediaStartTimes[mediaType];
+                }
+                if (eventType === 'ended') {
+                    mediaStats.completions++;
+                }
+            } else if (eventType === 'seeking' || eventType === 'seeked') {
+                mediaStats.seekEvents++;
+            }
+        }
+
+        // Video progress tracking
+        function trackVideoProgress(video) {
+            const progress = (video.currentTime / video.duration) * 100;
+            const currentTime = formatTime(video.currentTime);
+            const duration = formatTime(video.duration);
+            
+            // Update UI
+            document.getElementById('video-current').textContent = currentTime;
+            document.getElementById('video-duration').textContent = duration;
+            document.getElementById('video-progress').textContent = Math.round(progress) + '%';
+            document.getElementById('video-progress-bar').style.width = progress + '%';
+            
+            // Track progress milestones
+            const milestones = [25, 50, 75, 90];
+            milestones.forEach(milestone => {
+                if (progress >= milestone && !video.dataset[`milestone${milestone}`]) {
+                    video.dataset[`milestone${milestone}`] = 'true';
+                    
+                    if (window.oonly && window.oonly.track) {
+                        window.oonly.track('video_progress_milestone', {
+                            milestone: milestone,
+                            currentTime: Math.round(video.currentTime),
+                            duration: Math.round(video.duration),
+                            timestamp: Date.now()
+                        });
+                    }
+                }
+            });
+        }
+
+        // Audio progress tracking
+        function trackAudioProgress(audio) {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            const currentTime = formatTime(audio.currentTime);
+            const duration = formatTime(audio.duration);
+            
+            // Update UI
+            document.getElementById('audio-current').textContent = currentTime;
+            document.getElementById('audio-duration').textContent = duration;
+            document.getElementById('audio-progress').textContent = Math.round(progress) + '%';
+            document.getElementById('audio-progress-bar').style.width = progress + '%';
+            
+            // Track audio progress milestones
+            const milestones = [25, 50, 75, 90];
+            milestones.forEach(milestone => {
+                if (progress >= milestone && !audio.dataset[`milestone${milestone}`]) {
+                    audio.dataset[`milestone${milestone}`] = 'true';
+                    
+                    if (window.oonly && window.oonly.track) {
+                        window.oonly.track('audio_progress_milestone', {
+                            milestone: milestone,
+                            currentTime: Math.round(audio.currentTime),
+                            duration: Math.round(audio.duration),
+                            timestamp: Date.now()
+                        });
+                    }
+                }
+            });
+        }
+
+        // Video control functions
+        function playPauseVideo() {
+            const video = document.querySelector('video');
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        }
+
+        function seekVideo(seconds) {
+            const video = document.querySelector('video');
+            video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + seconds));
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('video_seek', {
+                    seekDirection: seconds > 0 ? 'forward' : 'backward',
+                    seekAmount: Math.abs(seconds),
+                    newTime: Math.round(video.currentTime),
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function changeVolume(volume) {
+            const video = document.querySelector('video');
+            video.volume = Math.max(0, Math.min(1, volume));
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('video_volume_change', {
+                    newVolume: Math.round(volume * 100),
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function toggleMute() {
+            const video = document.querySelector('video');
+            video.muted = !video.muted;
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('video_mute_toggle', {
+                    muted: video.muted,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function changePlaybackRate(rate) {
+            const video = document.querySelector('video');
+            video.playbackRate = rate;
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('video_playback_rate_change', {
+                    newRate: rate,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        // Audio control functions
+        function playPauseAudio() {
+            const audio = document.querySelector('audio');
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        function restartAudio() {
+            const audio = document.querySelector('audio');
+            audio.currentTime = 0;
+            audio.play();
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('audio_restart', {
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function toggleAudioLoop() {
+            const audio = document.querySelector('audio');
+            audio.loop = !audio.loop;
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('audio_loop_toggle', {
+                    looping: audio.loop,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function changeAudioVolume(volume) {
+            const audio = document.querySelector('audio');
+            audio.volume = Math.max(0, Math.min(1, volume));
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('audio_volume_change', {
+                    newVolume: Math.round(volume * 100),
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function toggleAudioMute() {
+            const audio = document.querySelector('audio');
+            audio.muted = !audio.muted;
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('audio_mute_toggle', {
+                    muted: audio.muted,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        // Playlist functions
+        function playPlaylistItem(index, title) {
+            // Remove previous playing indicator
+            document.querySelectorAll('.playlist-item').forEach(item => {
+                item.classList.remove('playing');
+            });
+            
+            // Add playing indicator to current item
+            event.currentTarget.classList.add('playing');
+            currentPlaylistItem = index;
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('playlist_item_select', {
+                    playlistIndex: index,
+                    itemTitle: title,
+                    previousItem: currentPlaylistItem,
+                    timestamp: Date.now()
+                });
+            }
+            
+            alert(`Now playing: ${title}`);
+        }
+
+        // Live stream functions
+        function joinLiveStream() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('live_stream_join', {
+                    streamType: 'demo',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Joined live stream!');
+        }
+
+        function sendChatMessage() {
+            const messages = [
+                'Great demo!',
+                'How do I implement this?',
+                'Love the analytics features',
+                'This is exactly what I need'
+            ];
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('live_stream_chat', {
+                    messageLength: message.length,
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Chat message sent: "${message}"`);
+        }
+
+        function reactToStream(reactionType) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('live_stream_reaction', {
+                    reactionType: reactionType,
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Reacted with: ${reactionType}`);
+        }
+
+        function shareStream() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('live_stream_share', {
+                    shareMethod: 'link',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Stream link copied to clipboard!');
+        }
+
+        function reportStream() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('live_stream_report', {
+                    reportReason: 'test',
+                    timestamp: Date.now()
+                });
+            }
+            alert('Report submitted (this is a test)');
+        }
+
+        // Interactive control functions
+        function testBatchPlayback() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('batch_playback_test', {
+                    testType: 'simultaneous',
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Simulate playing multiple media items
+            const video = document.querySelector('video');
+            const audio = document.querySelector('audio');
+            
+            if (video) video.play();
+            setTimeout(() => {
+                if (audio) audio.play();
+            }, 1000);
+            
+            alert('Batch playback test initiated!');
+        }
+
+        function simulateABTest() {
+            const playerType = Math.random() > 0.5 ? 'player_a' : 'player_b';
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('media_ab_test', {
+                    playerType: playerType,
+                    testGroup: playerType === 'player_a' ? 'control' : 'variant',
+                    timestamp: Date.now()
+                });
+            }
+            alert(`A/B test: Using ${playerType}`);
+        }
+
+        function trackCustomMediaEvent() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('custom_media_interaction', {
+                    interactionType: 'button_click',
+                    customData: {
+                        feature: 'analytics_test',
+                        userIntent: 'testing'
+                    },
+                    timestamp: Date.now()
+                });
+            }
+            alert('Custom media event tracked!');
+        }
+
+        function testMediaSegmentation() {
+            if (window.oonly && window.oonly.set) {
+                window.oonly.set({
+                    mediaEngagement: 'high',
+                    preferredMediaType: 'video',
+                    completionRate: 85,
+                    lastMediaInteraction: Date.now()
+                });
+            }
+            alert('Media segmentation properties updated!');
+        }
+
+        function changeVideoQuality() {
+            const qualities = ['480p', '720p', '1080p'];
+            const quality = qualities[Math.floor(Math.random() * qualities.length)];
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('video_quality_change', {
+                    newQuality: quality,
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Video quality changed to: ${quality}`);
+        }
+
+        function testBuffering() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('video_buffering', {
+                    bufferingDuration: Math.floor(Math.random() * 5000) + 1000, // 1-5 seconds
+                    timestamp: Date.now()
+                });
+            }
+            alert('Buffering event simulated!');
+        }
+
+        function shareMedia(platform) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('media_share', {
+                    platform: platform,
+                    mediaType: 'video',
+                    shareMethod: 'button',
+                    timestamp: Date.now()
+                });
+            }
+            alert(`Shared on ${platform}!`);
+        }
+
+        // Utility functions
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '--:--';
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateViewerCount() {
+            const count = 1200 + Math.floor(Math.random() * 100);
+            document.getElementById('viewer-count').textContent = `👁️ ${count.toLocaleString()} viewers`;
+        }
+
+        // Track media engagement on page unload
+        window.addEventListener('beforeunload', () => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('media_session_end', {
+                    totalVideoPlays: mediaStats.videoPlays,
+                    totalAudioPlays: mediaStats.audioPlays,
+                    totalPlayTime: mediaStats.totalPlayTime,
+                    completions: mediaStats.completions,
+                    seekEvents: mediaStats.seekEvents,
+                    playlistInteractions: currentPlaylistItem + 1,
+                    timestamp: Date.now()
+                });
+            }
+        });
+    </script>
+</body>
+</html>

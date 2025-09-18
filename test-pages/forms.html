@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms Testing - Oonly Tracker Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(252, 182, 159, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .forms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .form-container h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+            border-bottom: 2px solid #fcb69f;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #fcb69f;
+            box-shadow: 0 0 10px rgba(252, 182, 159, 0.3);
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #999;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .checkbox-group input[type="checkbox"],
+        .checkbox-group input[type="radio"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(45deg, #fcb69f, #ffecd2);
+            color: #333;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(252, 182, 159, 0.4);
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .validation-error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .form-progress {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .form-progress-bar {
+            background: linear-gradient(45deg, #fcb69f, #ffecd2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .tracking-info {
+            background: rgba(252, 182, 159, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #fcb69f;
+        }
+        
+        .form-stats {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(252, 182, 159, 0.1);
+            border-radius: 15px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fcb69f;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .forms-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Oonly Tracker Script -->
+    <script
+        defer
+        src="/src/tracker.js"
+        data-project-id="68a482061f216e82510ebb19"
+        data-api="http://127.0.0.1:5000"
+        data-ws="ws://127.0.0.1:5000"
+        data-ver="v1"
+    ></script>
+
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">🎯 Oonly Test</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="spa.html">SPA Demo</a></li>
+                    <li><a href="forms.html" class="active">Forms</a></li>
+                    <li><a href="media.html">Media</a></li>
+                    <li><a href="ecommerce.html">E-commerce</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>📝 Form Tracking Test Suite</h1>
+            <p>Comprehensive testing for form interactions, validations, and user behavior analytics</p>
+        </section>
+
+        <section class="form-stats">
+            <h2>📊 Form Analytics Dashboard</h2>
+            <div class="stats-grid" id="form-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="form-starts">0</span>
+                    <span>Form Starts</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="form-completions">0</span>
+                    <span>Completions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="form-abandonments">0</span>
+                    <span>Abandonments</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="avg-completion-time">0s</span>
+                    <span>Avg Time</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="forms-grid">
+            <!-- Registration Form -->
+            <div class="form-container" data-oonly-section="registration-form">
+                <h2>👤 User Registration Form</h2>
+                <div class="tracking-info">
+                    <strong>🎯 Testing:</strong> Complete form tracking with validation, field focus/blur, input masking for sensitive fields
+                </div>
+                
+                <div class="form-progress">
+                    <div class="form-progress-bar" id="registration-progress"></div>
+                </div>
+                
+                <form id="registrationForm" onsubmit="handleFormSubmit(event, 'registration')">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required placeholder="Enter your first name" oninput="updateProgress('registration')">
+                            <div class="validation-error" id="firstName-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Enter your last name" oninput="updateProgress('registration')">
+                            <div class="validation-error" id="lastName-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email address" oninput="updateProgress('registration')">
+                        <div class="validation-error" id="email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" id="password" name="password" required placeholder="Create a secure password" oninput="updateProgress('registration')">
+                        <div class="validation-error" id="password-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Your phone number" oninput="updateProgress('registration')">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" id="company" name="company" placeholder="Your company name" oninput="updateProgress('registration')">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required onchange="updateProgress('registration')">
+                        <label for="terms">I agree to the Terms of Service and Privacy Policy *</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="newsletter" name="newsletter" onchange="updateProgress('registration')">
+                        <label for="newsletter">Subscribe to our newsletter for updates</label>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Create Account</button>
+                </form>
+            </div>
+
+            <!-- Survey Form -->
+            <div class="form-container" data-oonly-section="survey-form">
+                <h2>📋 User Experience Survey</h2>
+                <div class="tracking-info">
+                    <strong>🎯 Testing:</strong> Multi-step form, radio buttons, checkboxes, text areas, and conditional logic
+                </div>
+                
+                <div class="form-progress">
+                    <div class="form-progress-bar" id="survey-progress"></div>
+                </div>
+                
+                <form id="surveyForm" onsubmit="handleFormSubmit(event, 'survey')">
+                    <div class="form-group">
+                        <label>How would you rate our service? *</label>
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                            <label class="checkbox-group">
+                                <input type="radio" name="rating" value="excellent" required onchange="updateProgress('survey')">
+                                <span>Excellent</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="radio" name="rating" value="good" required onchange="updateProgress('survey')">
+                                <span>Good</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="radio" name="rating" value="average" required onchange="updateProgress('survey')">
+                                <span>Average</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="radio" name="rating" value="poor" required onchange="updateProgress('survey')">
+                                <span>Poor</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="usage-frequency">How often do you use our product?</label>
+                        <select id="usage-frequency" name="usageFrequency" onchange="updateProgress('survey')">
+                            <option value="">Select frequency</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="rarely">Rarely</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Which features do you use most? (Select all that apply)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="features" value="analytics" onchange="updateProgress('survey')">
+                                <span>Analytics</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="features" value="reporting" onchange="updateProgress('survey')">
+                                <span>Reporting</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="features" value="integrations" onchange="updateProgress('survey')">
+                                <span>Integrations</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="features" value="collaboration" onchange="updateProgress('survey')">
+                                <span>Collaboration</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="feedback">Additional feedback or suggestions:</label>
+                        <textarea id="feedback" name="feedback" placeholder="Tell us what you think..." rows="4" oninput="updateProgress('survey')"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="recommendation">Would you recommend us to others?</label>
+                        <select id="recommendation" name="recommendation" onchange="updateProgress('survey')">
+                            <option value="">Select an option</option>
+                            <option value="definitely">Definitely</option>
+                            <option value="probably">Probably</option>
+                            <option value="not-sure">Not sure</option>
+                            <option value="probably-not">Probably not</option>
+                            <option value="definitely-not">Definitely not</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Submit Survey</button>
+                </form>
+            </div>
+
+            <!-- Contact Form with Validation -->
+            <div class="form-container" data-oonly-section="contact-form-advanced">
+                <h2>📧 Advanced Contact Form</h2>
+                <div class="tracking-info">
+                    <strong>🎯 Testing:</strong> Real-time validation, error tracking, field abandonment, and submission retries
+                </div>
+                
+                <div class="form-progress">
+                    <div class="form-progress-bar" id="contact-progress"></div>
+                </div>
+                
+                <form id="contactForm" onsubmit="handleFormSubmit(event, 'contact')" novalidate>
+                    <div class="form-group">
+                        <label for="contact-name">Full Name *</label>
+                        <input type="text" id="contact-name" name="name" required placeholder="Enter your full name" 
+                               oninput="validateField(this); updateProgress('contact')" 
+                               onblur="validateField(this)">
+                        <div class="validation-error" id="contact-name-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-email">Email Address *</label>
+                        <input type="email" id="contact-email" name="email" required placeholder="Enter your email" 
+                               oninput="validateField(this); updateProgress('contact')" 
+                               onblur="validateField(this)">
+                        <div class="validation-error" id="contact-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-subject">Subject *</label>
+                        <select id="contact-subject" name="subject" required onchange="validateField(this); updateProgress('contact')">
+                            <option value="">Select a subject</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="support">Technical Support</option>
+                            <option value="billing">Billing Question</option>
+                            <option value="partnership">Partnership</option>
+                            <option value="demo">Request Demo</option>
+                        </select>
+                        <div class="validation-error" id="contact-subject-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-priority">Priority Level</label>
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                            <label class="checkbox-group">
+                                <input type="radio" name="priority" value="low" onchange="updateProgress('contact')">
+                                <span>Low</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="radio" name="priority" value="medium" onchange="updateProgress('contact')">
+                                <span>Medium</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="radio" name="priority" value="high" onchange="updateProgress('contact')">
+                                <span>High</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-message">Message *</label>
+                        <textarea id="contact-message" name="message" required placeholder="Describe your inquiry..." 
+                                  rows="5" oninput="validateField(this); updateProgress('contact')" 
+                                  onblur="validateField(this)"></textarea>
+                        <div class="validation-error" id="contact-message-error"></div>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="contact-updates" name="updates" onchange="updateProgress('contact')">
+                        <label for="contact-updates">Keep me updated on this inquiry</label>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Send Message</button>
+                </form>
+            </div>
+
+            <!-- Search Form -->
+            <div class="form-container" data-oonly-section="search-form">
+                <h2>🔍 Advanced Search Form</h2>
+                <div class="tracking-info">
+                    <strong>🎯 Testing:</strong> Search queries, filters, auto-suggestions, and search abandonment
+                </div>
+                
+                <form id="searchForm" onsubmit="handleFormSubmit(event, 'search')">
+                    <div class="form-group">
+                        <label for="search-query">Search Query</label>
+                        <input type="search" id="search-query" name="query" placeholder="What are you looking for?" 
+                               oninput="handleSearchInput(this)" onkeyup="trackSearchTyping(this)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="search-category">Category</label>
+                        <select id="search-category" name="category" onchange="updateSearchFilters()">
+                            <option value="">All Categories</option>
+                            <option value="documentation">Documentation</option>
+                            <option value="tutorials">Tutorials</option>
+                            <option value="api">API Reference</option>
+                            <option value="support">Support Articles</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Content Type</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="contentType" value="articles" onchange="updateSearchFilters()">
+                                <span>Articles</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="contentType" value="videos" onchange="updateSearchFilters()">
+                                <span>Videos</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="contentType" value="guides" onchange="updateSearchFilters()">
+                                <span>Guides</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="contentType" value="faqs" onchange="updateSearchFilters()">
+                                <span>FAQs</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="search-date-from">Date From</label>
+                            <input type="date" id="search-date-from" name="dateFrom" onchange="updateSearchFilters()">
+                        </div>
+                        <div class="form-group">
+                            <label for="search-date-to">Date To</label>
+                            <input type="date" id="search-date-to" name="dateTo" onchange="updateSearchFilters()">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="search-sort">Sort by</label>
+                        <select id="search-sort" name="sortBy" onchange="updateSearchFilters()">
+                            <option value="relevance">Relevance</option>
+                            <option value="date">Date</option>
+                            <option value="popularity">Popularity</option>
+                            <option value="title">Title A-Z</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Search</button>
+                    <button type="button" class="btn-submit" onclick="clearSearch()" style="background: #e0e0e0; color: #333; margin-top: 0.5rem;">Clear Filters</button>
+                </form>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem 0; opacity: 0.8;">
+            <p>&copy; 2024 Oonly Tracker - Forms & Interaction Testing</p>
+        </footer>
+    </div>
+
+    <script>
+        // Form analytics tracking
+        let formStats = {
+            starts: 0,
+            completions: 0,
+            abandonments: 0,
+            totalTime: 0,
+            completionTimes: []
+        };
+        
+        let formStartTimes = {};
+        let formInteractions = {};
+
+        // Track page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('forms_page_view', {
+                    formsAvailable: document.querySelectorAll('form').length,
+                    timestamp: Date.now()
+                });
+            }
+        });
+
+        // Form submission handler
+        function handleFormSubmit(event, formType) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const formObject = {};
+            
+            // Convert FormData to object
+            for (let [key, value] of formData.entries()) {
+                if (formObject[key]) {
+                    // Handle multiple values (checkboxes)
+                    if (Array.isArray(formObject[key])) {
+                        formObject[key].push(value);
+                    } else {
+                        formObject[key] = [formObject[key], value];
+                    }
+                } else {
+                    formObject[key] = value;
+                }
+            }
+            
+            // Calculate completion time
+            const startTime = formStartTimes[formType];
+            const completionTime = startTime ? Date.now() - startTime : 0;
+            
+            // Track form submission
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('form_submit', {
+                    formType: formType,
+                    formData: formObject,
+                    completionTime: completionTime,
+                    fieldCount: Object.keys(formObject).length,
+                    hasValidationErrors: false, // Would be calculated in real implementation
+                    timestamp: Date.now()
+                });
+                
+                // Update user properties based on form data
+                if (window.oonly.set) {
+                    const userProps = {};
+                    if (formObject.email) userProps.email = formObject.email;
+                    if (formObject.name || formObject.firstName) {
+                        userProps.name = formObject.name || `${formObject.firstName} ${formObject.lastName}`;
+                    }
+                    if (formObject.company) userProps.company = formObject.company;
+                    if (formObject.phone) userProps.phone = formObject.phone;
+                    
+                    window.oonly.set(userProps);
+                }
+            }
+            
+            // Update statistics
+            formStats.completions++;
+            if (completionTime > 0) {
+                formStats.completionTimes.push(completionTime);
+                formStats.totalTime += completionTime;
+            }
+            updateFormStats();
+            
+            // Simulate form submission
+            const submitButton = form.querySelector('.btn-submit');
+            submitButton.textContent = 'Submitting...';
+            submitButton.disabled = true;
+            
+            setTimeout(() => {
+                alert(`${formType} form submitted successfully!`);
+                form.reset();
+                updateProgress(formType);
+                submitButton.textContent = getOriginalButtonText(formType);
+                submitButton.disabled = false;
+            }, 2000);
+        }
+
+        // Form progress tracking
+        function updateProgress(formType) {
+            const form = document.getElementById(`${formType}Form`);
+            const progressBar = document.getElementById(`${formType}-progress`);
+            
+            if (!form || !progressBar) return;
+            
+            const fields = form.querySelectorAll('input[required], select[required], textarea[required]');
+            const filledFields = Array.from(fields).filter(field => {
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    return field.checked;
+                }
+                return field.value.trim() !== '';
+            });
+            
+            const progress = Math.round((filledFields.length / fields.length) * 100);
+            progressBar.style.width = progress + '%';
+            
+            // Track form progress
+            if (window.oonly && window.oonly.track && progress > 0) {
+                window.oonly.track('form_progress', {
+                    formType: formType,
+                    progress: progress,
+                    fieldsCompleted: filledFields.length,
+                    totalFields: fields.length,
+                    timestamp: Date.now()
+                });
+            }
+            
+            return progress;
+        }
+
+        // Field validation
+        function validateField(field) {
+            const errorElement = document.getElementById(`${field.id}-error`);
+            let isValid = true;
+            let errorMessage = '';
+            
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                isValid = false;
+                errorMessage = 'This field is required';
+            } else if (field.type === 'email' && field.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid email address';
+                }
+            } else if (field.name === 'password' && field.value) {
+                if (field.value.length < 8) {
+                    isValid = false;
+                    errorMessage = 'Password must be at least 8 characters long';
+                }
+            }
+            
+            if (errorElement) {
+                if (isValid) {
+                    errorElement.style.display = 'none';
+                    field.style.borderColor = '#e0e0e0';
+                } else {
+                    errorElement.textContent = errorMessage;
+                    errorElement.style.display = 'block';
+                    field.style.borderColor = '#e74c3c';
+                }
+            }
+            
+            // Track validation errors
+            if (!isValid && window.oonly && window.oonly.track) {
+                window.oonly.track('form_validation_error', {
+                    fieldName: field.name,
+                    fieldType: field.type,
+                    errorMessage: errorMessage,
+                    timestamp: Date.now()
+                });
+            }
+            
+            return isValid;
+        }
+
+        // Search functionality
+        let searchTimeout;
+        function handleSearchInput(input) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (window.oonly && window.oonly.track) {
+                    window.oonly.track('search_input', {
+                        query: input.value,
+                        queryLength: input.value.length,
+                        timestamp: Date.now()
+                    });
+                }
+            }, 500);
+        }
+
+        function trackSearchTyping(input) {
+            // Track search abandonment if user stops typing
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (input.value.length > 2) {
+                    if (window.oonly && window.oonly.track) {
+                        window.oonly.track('search_typing_stopped', {
+                            query: input.value,
+                            queryLength: input.value.length,
+                            timestamp: Date.now()
+                        });
+                    }
+                }
+            }, 3000);
+        }
+
+        function updateSearchFilters() {
+            if (window.oonly && window.oonly.track) {
+                const form = document.getElementById('searchForm');
+                const formData = new FormData(form);
+                const filters = {};
+                
+                for (let [key, value] of formData.entries()) {
+                    if (filters[key]) {
+                        if (Array.isArray(filters[key])) {
+                            filters[key].push(value);
+                        } else {
+                            filters[key] = [filters[key], value];
+                        }
+                    } else {
+                        filters[key] = value;
+                    }
+                }
+                
+                window.oonly.track('search_filters_change', {
+                    filters: filters,
+                    activeFilters: Object.keys(filters).length,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function clearSearch() {
+            const form = document.getElementById('searchForm');
+            form.reset();
+            
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('search_clear', {
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        // Track form starts
+        document.querySelectorAll('form').forEach(form => {
+            let formStarted = false;
+            const formType = form.id.replace('Form', '');
+            
+            form.addEventListener('input', () => {
+                if (!formStarted) {
+                    formStarted = true;
+                    formStartTimes[formType] = Date.now();
+                    formStats.starts++;
+                    updateFormStats();
+                    
+                    if (window.oonly && window.oonly.track) {
+                        window.oonly.track('form_start', {
+                            formType: formType,
+                            timestamp: Date.now()
+                        });
+                    }
+                }
+            });
+        });
+
+        // Track form field interactions
+        document.querySelectorAll('input, textarea, select').forEach(field => {
+            let focusTime = null;
+            let interactionCount = 0;
+            
+            field.addEventListener('focus', () => {
+                focusTime = Date.now();
+                interactionCount++;
+                
+                if (window.oonly && window.oonly.track) {
+                    window.oonly.track('form_field_focus', {
+                        fieldName: field.name,
+                        fieldType: field.type || field.tagName.toLowerCase(),
+                        interactionCount: interactionCount,
+                        timestamp: Date.now()
+                    });
+                }
+            });
+            
+            field.addEventListener('blur', () => {
+                if (focusTime) {
+                    const timeSpent = Date.now() - focusTime;
+                    
+                    if (window.oonly && window.oonly.track) {
+                        window.oonly.track('form_field_blur', {
+                            fieldName: field.name,
+                            fieldType: field.type || field.tagName.toLowerCase(),
+                            timeSpent: timeSpent,
+                            hasValue: !!field.value,
+                            valueLength: field.value ? field.value.length : 0,
+                            interactionCount: interactionCount,
+                            timestamp: Date.now()
+                        });
+                    }
+                    focusTime = null;
+                }
+            });
+        });
+
+        // Update form statistics display
+        function updateFormStats() {
+            document.getElementById('form-starts').textContent = formStats.starts;
+            document.getElementById('form-completions').textContent = formStats.completions;
+            document.getElementById('form-abandonments').textContent = formStats.starts - formStats.completions;
+            
+            if (formStats.completionTimes.length > 0) {
+                const avgTime = Math.round(formStats.totalTime / formStats.completionTimes.length / 1000);
+                document.getElementById('avg-completion-time').textContent = avgTime + 's';
+            }
+        }
+
+        function getOriginalButtonText(formType) {
+            const texts = {
+                'registration': 'Create Account',
+                'survey': 'Submit Survey',
+                'contact': 'Send Message',
+                'search': 'Search'
+            };
+            return texts[formType] || 'Submit';
+        }
+
+        // Track form abandonment on page unload
+        window.addEventListener('beforeunload', () => {
+            Object.keys(formStartTimes).forEach(formType => {
+                const form = document.getElementById(`${formType}Form`);
+                if (form && formStartTimes[formType]) {
+                    const progress = updateProgress(formType);
+                    if (progress > 0 && progress < 100) {
+                        formStats.abandonments++;
+                        
+                        if (window.oonly && window.oonly.track) {
+                            window.oonly.track('form_abandonment', {
+                                formType: formType,
+                                progress: progress,
+                                timeSpent: Date.now() - formStartTimes[formType],
+                                timestamp: Date.now()
+                            });
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

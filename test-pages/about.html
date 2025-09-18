@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Oonly Tracker Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .content-card h3 {
+            margin-bottom: 1rem;
+            color: #fff;
+            font-size: 1.4rem;
+        }
+        
+        .timeline {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-item {
+            padding: 1rem 0;
+            border-left: 3px solid #74b9ff;
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            background: #74b9ff;
+            border-radius: 50%;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #74b9ff;
+            display: block;
+        }
+        
+        .interaction-area {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+        
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Oonly Tracker Script -->
+    <script
+        defer
+        src="/src/tracker.js"
+        data-project-id="68a482061f216e82510ebb19"
+        data-api="http://127.0.0.1:5000"
+        data-ws="ws://127.0.0.1:5000"
+        data-ver="v1"
+    ></script>
+
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">🎯 Oonly Test</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html" class="active">About</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="spa.html">SPA Demo</a></li>
+                    <li><a href="forms.html">Forms</a></li>
+                    <li><a href="media.html">Media</a></li>
+                    <li><a href="ecommerce.html">E-commerce</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>About Oonly Tracker</h1>
+            <p>Advanced analytics and session tracking for modern web applications</p>
+        </section>
+
+        <section class="content">
+            <div class="content-card" data-oonly-section="mission">
+                <h3>🎯 Our Mission</h3>
+                <p>To provide comprehensive user behavior analytics that help businesses understand their customers' journey across both traditional websites and modern single-page applications. We bridge the gap between classical web analytics and advanced session recording.</p>
+            </div>
+            <div class="content-card" data-oonly-section="technology">
+                <h3>⚡ Technology Stack</h3>
+                <p>Built with cutting-edge web technologies including real-time WebSocket streaming, rrweb session recording, advanced user segmentation, and comprehensive form tracking. Our solution works seamlessly across all devices and browsers.</p>
+            </div>
+        </section>
+
+        <section class="timeline">
+            <h2>📅 Development Timeline</h2>
+            <div class="timeline-item">
+                <h4>Q1 2024 - Foundation</h4>
+                <p>Core tracking infrastructure and session management</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Q2 2024 - Enhanced Features</h4>
+                <p>Session recording, user segmentation, and real-time streaming</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Q3 2024 - Advanced Analytics</h4>
+                <p>Behavioral insights, funnel analysis, and performance tracking</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Q4 2024 - Scale & Optimize</h4>
+                <p>Enterprise features, privacy controls, and global deployment</p>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <span class="stat-number">99.9%</span>
+                <span>Uptime</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">50ms</span>
+                <span>Avg Response</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">1M+</span>
+                <span>Events/Day</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">100+</span>
+                <span>Integrations</span>
+            </div>
+        </section>
+
+        <section class="interaction-area" data-oonly-section="about-interactions">
+            <h2>🧪 Test About Page Interactions</h2>
+            <p>This section demonstrates tracking on a traditional page load scenario.</p>
+            
+            <button class="btn" onclick="trackPageEngagement()">Track Page Engagement</button>
+            <button class="btn" onclick="simulateScrollPattern()">Simulate Reading Pattern</button>
+            <button class="btn" onclick="trackFeatureInterest('about')">Show Interest in Features</button>
+            <button class="btn" onclick="downloadBrochure()">Download Brochure</button>
+            
+            <div style="margin-top: 1rem;">
+                <h3>📊 Page Analytics</h3>
+                <p id="analytics-display">Page loaded at: <span id="load-time"></span></p>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem 0; opacity: 0.8;">
+            <p>&copy; 2024 Oonly Tracker - Traditional Page Navigation Test</p>
+        </footer>
+    </div>
+
+    <script>
+        // Track page load time
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadTime = new Date().toLocaleTimeString();
+            document.getElementById('load-time').textContent = loadTime;
+            
+            // Track that user arrived at about page
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('about_page_view', {
+                    loadTime: Date.now(),
+                    referrer: document.referrer,
+                    userAgent: navigator.userAgent.substring(0, 100)
+                });
+            }
+        });
+
+        function trackPageEngagement() {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('page_engagement', {
+                    page: 'about',
+                    timeOnPage: Date.now() - performance.navigationStart,
+                    scrollDepth: Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100)
+                });
+                alert('Page engagement tracked!');
+            }
+        }
+
+        function simulateScrollPattern() {
+            // Simulate natural reading pattern
+            const sections = ['mission', 'technology'];
+            let currentSection = 0;
+            
+            function scrollToNextSection() {
+                if (currentSection < sections.length) {
+                    const element = document.querySelector(`[data-oonly-section="${sections[currentSection]}"]`);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // Track section view
+                        if (window.oonly && window.oonly.track) {
+                            window.oonly.track('section_view', {
+                                section: sections[currentSection],
+                                viewOrder: currentSection + 1,
+                                timestamp: Date.now()
+                            });
+                        }
+                    }
+                    currentSection++;
+                    setTimeout(scrollToNextSection, 2000);
+                }
+            }
+            
+            scrollToNextSection();
+            alert('Reading pattern simulation started!');
+        }
+
+        function trackFeatureInterest(page) {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('feature_interest', {
+                    page: page,
+                    feature: 'analytics',
+                    interestLevel: 'high',
+                    timestamp: Date.now()
+                });
+                
+                // Also update user properties
+                if (window.oonly.set) {
+                    window.oonly.set({
+                        interestedInAnalytics: true,
+                        lastFeatureInteraction: page
+                    });
+                }
+                alert('Feature interest tracked and user properties updated!');
+            }
+        }
+
+        function downloadBrochure() {
+            // Simulate a download action
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('download_attempt', {
+                    fileType: 'brochure',
+                    fileName: 'oonly-analytics-brochure.pdf',
+                    page: 'about',
+                    timestamp: Date.now()
+                });
+            }
+            
+            // Create a fake download link
+            const link = document.createElement('a');
+            link.href = 'data:text/plain;charset=utf-8,Oonly Analytics Brochure\nComprehensive tracking solution for modern web applications.';
+            link.download = 'oonly-brochure.txt';
+            link.click();
+            
+            alert('Brochure download tracked!');
+        }
+
+        // Track time spent on page
+        let pageStartTime = Date.now();
+        
+        window.addEventListener('beforeunload', () => {
+            if (window.oonly && window.oonly.track) {
+                window.oonly.track('page_exit', {
+                    page: 'about',
+                    timeSpent: Date.now() - pageStartTime,
+                    exitType: 'navigation'
+                });
+            }
+        });
+
+        // Track scroll depth milestones
+        let maxScrollDepth = 0;
+        window.addEventListener('scroll', () => {
+            const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+            if (scrollPercent > maxScrollDepth && scrollPercent % 25 === 0) {
+                maxScrollDepth = scrollPercent;
+                if (window.oonly && window.oonly.track) {
+                    window.oonly.track('scroll_milestone', {
+                        page: 'about',
+                        depth: scrollPercent,
+                        timestamp: Date.now()
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
